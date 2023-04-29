@@ -30,7 +30,9 @@ public class Ship extends Sprite{
 		this.health = this.initialHealth;
 		this.alive = true;
 		this.bullets = new ArrayList<Bullet>();
-		this.loadImage(Ship.SHIP_IMAGE_STAND);
+
+		// this.loadImage(Ship.SHIP_IMAGE_STAND);
+		this.loadImage(MASK_IMAGE_WALK);  // ship walks initially
 	}
 
 	// GETTERS
