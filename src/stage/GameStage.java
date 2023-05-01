@@ -34,7 +34,7 @@ public class GameStage {
 		this.canvas = new Canvas(GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT);
 		this.gc = canvas.getGraphicsContext2D();
 		this.view = new ImageView();
-		this.gameBackground = new Image(GameStage.GAME_BACKGROUND_PATH);
+		this.gameBackground = new Image(GameStage.GAME_BACKGROUND_PATH, GameStage.WINDOW_WIDTH, GameStage.WINDOW_HEIGHT, false, false);
 		this.view.setImage(this.gameBackground);
 
 		//instantiate an animation timer

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import background_elements.RoadLines;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -41,6 +42,7 @@ public class GameTimer extends AnimationTimer{
 	private long startMove;
 	private long startSpawnBuff;
 	private boolean hasMask;
+	private int init_ctr;
 
 	private ArrayList<GameTimeSeconds> timers;
 	private static int timerIndex = 0;
@@ -56,6 +58,8 @@ public class GameTimer extends AnimationTimer{
 	public static boolean ImmoTimerStarted = false;
 	public static int fishKilled = 0;
 
+	private ArrayList<RoadLines> lines;
+	private ArrayList<RoadLines> initLines;
 	// CONSTRUCTOR
 	public GameTimer(GraphicsContext gc, Scene theScene){
 		this.gc = gc;
@@ -66,6 +70,8 @@ public class GameTimer extends AnimationTimer{
 		this.startSpawnBuff = System.nanoTime();	//get current nanotime
 		//this.startImmortal = System.nanoTime();
 		this.myShip = new Ship("Peter",100,100);
+		this.init_ctr= 1;
+
 		//instantiate the ArrayList of Fish
 		this.fishes = new ArrayList<Fish>();
 		this.buffs = new ArrayList<GameBuff>();
@@ -76,6 +82,9 @@ public class GameTimer extends AnimationTimer{
 		//call method to handle mouse click event
 		this.handleKeyPressEvent();
 		this.initStatus();
+
+		this.lines= new ArrayList<RoadLines>();
+		this.initLines= new ArrayList<RoadLines>();
 		// this.initTimer();
 	}
 
@@ -90,6 +99,7 @@ public class GameTimer extends AnimationTimer{
 		long currentSec = TimeUnit.NANOSECONDS.toSeconds(currentNanoTime);
 		long appStartSec = TimeUnit.NANOSECONDS.toSeconds(this.timeReference);
 
+
 		long startSec = TimeUnit.NANOSECONDS.toSeconds(this.startSpawn);
 		long startMove = TimeUnit.NANOSECONDS.toSeconds(this.startMove);
 		long startSpawnSecBuff = TimeUnit.NANOSECONDS.toSeconds(this.startSpawnBuff);
@@ -99,6 +109,13 @@ public class GameTimer extends AnimationTimer{
 
 		// check gameover
 		this.checkGameOver(gameTimeSec);
+
+		//speed animation
+		if(this.init_ctr > 0){
+			this.initLines(5);
+			this.init_ctr--;
+		}
+		this.backgroundAnimation(currentSec, startMove, currentNanoTime);
 
 		// every 3 seconds, spawn fish
 		this.spawnFishesEvery3Sec(currentSec, startSec, currentNanoTime);
@@ -114,6 +131,7 @@ public class GameTimer extends AnimationTimer{
 		}*/
 
 		// spawn buff every 10 seconds
+
 		this.spawnBuffsEvery10(currentSec, startSpawnSecBuff, currentNanoTime);
 		this.removeBuffsEvery5(currentSec, startSpawnSecBuff);
 		this.collideBuff();
@@ -135,6 +153,11 @@ public class GameTimer extends AnimationTimer{
 			}
 		}
 		*/
+		this.moveLines();
+		this.renderLines();
+
+		this.moveinitLines();
+		this.renderinitLines();
 
 		this.myShip.move();
 		/*
@@ -154,6 +177,77 @@ public class GameTimer extends AnimationTimer{
 		this.fishHitsShip();  // MARK: check fish-ship collision
 
 		this.textRender(this.gc, gameTimeSec);
+	}
+
+	//Road Lines Animation
+
+	private void initLines(int howMany){
+		int loc=80;
+		for(int i=0;i<= howMany;i++){
+			int x = -0;
+			int y = (GameStage.WINDOW_HEIGHT - (loc * i)) ;
+
+			 // Add a new object Fish to the fishes arraylist
+			RoadLines initLine= new RoadLines(x,y,0);
+			this.initLines.add(initLine);
+		}
+	}
+
+	private void renderinitLines() {
+		for (RoadLines l : this.initLines){
+			l.render(this.gc);
+		}
+	}
+
+	private void moveinitLines(){
+		//Loop through the fishes arraylist
+		for(int i = 0; i < this.initLines.size(); i++){
+			RoadLines r = this.initLines.get(i);
+			if (r.isAlive()) {
+//				System.out.println(l.isAlive());
+				r.move();
+			} else {
+				this.initLines.remove(r); // remove fish from arraylist
+			}
+		}
+	}
+
+	private void backgroundAnimation(long currentSec, long startMove,long currentNanoTime){
+		if((currentSec - startMove) > 1){
+			this.animateLines(5);
+			this.startMove = currentNanoTime;
+		}
+	}
+
+	private void animateLines(int howMany){
+		int loc=80;
+		for(int i=0;i<= howMany;i++){
+			int x = GameStage.WINDOW_WIDTH;
+			int y = (GameStage.WINDOW_HEIGHT - (loc * i)) ;
+
+			 // Add a new object Fish to the fishes arraylist
+			RoadLines line= new RoadLines(x,y,1);
+			this.lines.add(line);
+		}
+	}
+
+	private void renderLines() {
+		for (RoadLines l : this.lines){
+			l.render(this.gc);
+		}
+	}
+
+	private void moveLines(){
+		//Loop through the fishes arraylist
+		for(int i = 0; i < this.lines.size(); i++){
+			RoadLines r = this.lines.get(i);
+			if (r.isAlive()) {
+//				System.out.println(l.isAlive());
+				r.move();
+			} else {
+				this.lines.remove(r); // remove fish from arraylist
+			}
+		}
 	}
 
 	// FISH METHODS
@@ -392,8 +486,8 @@ public class GameTimer extends AnimationTimer{
             	if(code == KeyCode.UP ||
             	   code == KeyCode.LEFT ||
             	   code == KeyCode.DOWN ||
-            	   code == KeyCode.RIGHT) {
-
+            	   code == KeyCode.RIGHT)
+            	   {
             		if (hasMask) {
             			myShip.loadImage(Ship.MASK_IMAGE_WALK);
             		} else {
@@ -491,9 +585,9 @@ public class GameTimer extends AnimationTimer{
 	private void textRender(GraphicsContext gc, long currentSec) {
         //this.gc.setTextAlign(TextAlignment.LEFT);
         //this.gc.setTextBaseline(VPos.CENTER);
-        this.gc.fillText("Health: " + this.myShip.getHealth(), this.hpTextX, this.textY);
-        this.gc.fillText("Time: " + currentSec, this.timeTextX, this.textY);
-        this.gc.fillText("Virus Killed: " + GameTimer.fishKilled, this.fishKilledTextX, this.textY);
+        this.gc.fillText("Speed: " + this.myShip.getSpeed(), this.hpTextX, this.textY);
+        this.gc.fillText("Distance: " + (currentSec * this.myShip.getSpeed()), this.timeTextX, this.textY); //distance= speed*time
+//        this.gc.fillText("Virus Killed: " + GameTimer.fishKilled, this.fishKilledTextX, this.textY);
     }
 
 	/*

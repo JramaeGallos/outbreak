@@ -32,7 +32,7 @@ public class GameBuff extends Sprite {
 	// called in GameTimer when buff is picked up
 	void affectShip(int type) {
 		if (type == 0) {
-			this.affectedShip.setHealth(this.affectedShip.getHealth() + 50);
+			this.affectedShip.setSpeed(this.affectedShip.getSpeed() + 50);
 		} else if (type == 1) {
 			this.affectedShip.setImmortal(true);
 		}

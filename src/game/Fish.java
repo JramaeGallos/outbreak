@@ -7,8 +7,8 @@ import javafx.scene.image.Image;
 // fish enemy class (virus)
 public class Fish extends Sprite {
 	public static final int MAX_FISH_SPEED = 3; // speed varies by 3
-	public static final int MAX_FISH_DAMAGE = 20;
-	public static final int MIN_FISH_DAMAGE = 10;
+	public static final int MAX_FISH_DAMAGE = 3;
+	public static final int MIN_FISH_DAMAGE = 1;
 
 	// MARK: FISH IMAGES
 	public final static Image FISH_IMAGE1 = new Image("images/virus_1.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);

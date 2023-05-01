@@ -8,8 +8,8 @@ import stage.GameStage;
 public class Ship extends Sprite{
 
 	private String name;
-	private int health;
-	private final int initialHealth = 100;
+	private int speed;
+	private final int initialSpeed = 3;
 	private boolean alive;
 	private boolean immortal;
 
@@ -19,15 +19,15 @@ public class Ship extends Sprite{
 	public final static Image MASK_IMAGE_STAND = new Image("images/doctor_mask_stand.png",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 	public final static Image MASK_IMAGE_WALK = new Image("images/doctor_mask_walk.gif",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 
-	private final static int SHIP_HEIGHT = 87; // scaled down from 525
-	private final static int SHIP_WIDTH = 50; // scaled down from 300
+	private final static int SHIP_HEIGHT = 150; // scaled down from 525
+	private final static int SHIP_WIDTH = 90; // scaled down from 300
 
 	// CONSTRUCTOR
 	public Ship(String name, int x, int y){
 		super(x,y);
 		this.name = name;
 		this.immortal = false;
-		this.health = this.initialHealth;
+		this.speed = this.initialSpeed;
 		this.alive = true;
 		this.bullets = new ArrayList<Bullet>();
 
@@ -43,11 +43,14 @@ public class Ship extends Sprite{
 	public String getName(){
 		return this.name;
 	}
-	public int getHealth() {
-		return this.health;
+	public int getSpeed() {
+		return this.speed;
 	}
 	void gotHit(Fish virus) {
-		this.health -= virus.getDamage();
+		if(this.speed - virus.getDamage() > this.initialSpeed){
+			this.speed -= virus.getDamage();
+		}
+
 	}
 	//method that will get the bullets 'shot' by the ship
 	public ArrayList<Bullet> getBullets(){
@@ -58,8 +61,8 @@ public class Ship extends Sprite{
 	}
 
 	// SETTERS
-	public void setHealth(int health) {
-		this.health = health;
+	public void setSpeed(int speed) {
+		this.speed = speed;
 	}
 	public void die() {
     	this.alive = false;
