@@ -29,13 +29,13 @@ public class GameTimer extends AnimationTimer{
 	private GraphicsContext gc;
 	private Scene theScene;
 	private Ship myShip;
-	private Boss boss;
 
 	// constants for text position in rendering status
 	private final int hpTextX = 40;
-	private final int timeTextX = 350;
-	private final int fishKilledTextX = 570;
+	private final int timeTextX = 300;
+	private final int healthTextX = 570;
 	private final int textY = 40;
+	private final int maxDistance = 100;
 
 	private long timeReference;
 	private long startSpawn;
@@ -57,6 +57,7 @@ public class GameTimer extends AnimationTimer{
 	public static boolean bossDead = false;
 	public static boolean ImmoTimerStarted = false;
 	public static int fishKilled = 0;
+
 
 	private ArrayList<RoadLines> lines;
 	private ArrayList<RoadLines> initLines;
@@ -117,27 +118,18 @@ public class GameTimer extends AnimationTimer{
 		}
 		this.backgroundAnimation(currentSec, startMove, currentNanoTime);
 
-		// every 3 seconds, spawn fish
+		// every 5 seconds, spawn fish
 		this.spawnFishesEvery3Sec(currentSec, startSec, currentNanoTime);
 
-		// (OLD CODE) code to spawn boss
-		/*if (gameTimeSec > bossFightSec) {  // boss fight starts
-			this.spawnBoss();
-			if (this.boss.isAlive()) {
-				this.controlBoss(currentSec, startMove, currentNanoTime);
-				this.BossBulletHitsFish();
-				this.checkBossDeath();
-			}
-		}*/
-
 		// spawn buff every 10 seconds
-
-		this.spawnBuffsEvery10(currentSec, startSpawnSecBuff, currentNanoTime);
+		this.spawnBuffsEvery8(currentSec, startSpawnSecBuff, currentNanoTime);
 		this.removeBuffsEvery5(currentSec, startSpawnSecBuff);
 		this.collideBuff();
 
-		/* (OLD CODE)
-		 * if (this.myShip.getImmortal() == true) {
+		/* (Ley's note:)
+		 * Check is working properly
+		 */
+		if (this.myShip.getImmortal() == true) {
 			// one-time starting of immortal timer
 			if (!GameTimer.ImmoTimerStarted) {
 				GameTimeSeconds time = this.timers.get(timerIndex);
@@ -152,7 +144,7 @@ public class GameTimer extends AnimationTimer{
 				GameTimer.ImmoTimerStarted = false;
 			}
 		}
-		*/
+
 		this.moveLines();
 		this.renderLines();
 
@@ -180,7 +172,6 @@ public class GameTimer extends AnimationTimer{
 	}
 
 	//Road Lines Animation
-
 	private void initLines(int howMany){
 		int loc=80;
 		for(int i=0;i<= howMany;i++){
@@ -204,7 +195,6 @@ public class GameTimer extends AnimationTimer{
 		for(int i = 0; i < this.initLines.size(); i++){
 			RoadLines r = this.initLines.get(i);
 			if (r.isAlive()) {
-//				System.out.println(l.isAlive());
 				r.move();
 			} else {
 				this.initLines.remove(r); // remove fish from arraylist
@@ -242,7 +232,6 @@ public class GameTimer extends AnimationTimer{
 		for(int i = 0; i < this.lines.size(); i++){
 			RoadLines r = this.lines.get(i);
 			if (r.isAlive()) {
-//				System.out.println(l.isAlive());
 				r.move();
 			} else {
 				this.lines.remove(r); // remove fish from arraylist
@@ -258,7 +247,7 @@ public class GameTimer extends AnimationTimer{
 	}
 	private void spawnFishes(int howMany){
 		Random r = new Random();
-		for(int i=0;i<howMany;i++){
+		for(int i = 0; i < howMany; i++){
 			int x = GameStage.WINDOW_WIDTH;
 			int y = r.nextInt(GameStage.WINDOW_HEIGHT-Fish.FISH_WIDTH);
 
@@ -269,7 +258,7 @@ public class GameTimer extends AnimationTimer{
 	}
 	private void spawnFishesEvery3Sec(long currentSec, long startSec, long currentNanoTime) {
 		if((currentSec - startSec) > 3){
-			this.spawnFishes(3);
+			this.spawnFishes(1);
 			this.startSpawn = currentNanoTime;
 		}
 	}
@@ -277,9 +266,6 @@ public class GameTimer extends AnimationTimer{
 		//Loop through the fishes arraylist
 		for(int i = 0; i < this.fishes.size(); i++){
 			Fish f = this.fishes.get(i);
-			/*
-			 * TODO:  *If a fish is alive, move the fish. Else, remove the fish from the fishes arraylist.
-			 */
 			if (f.isAlive()) {
 				f.move();
 			} else {
@@ -288,113 +274,6 @@ public class GameTimer extends AnimationTimer{
 		}
 	}
 
-	/*
-
-	// BULLET METHODS
-	private void renderBullets() {
-
-		 *Loop through the bullets arraylist of myShip
-		 *				and render each bullet to the canvas
-
-		for (Bullet b : this.myShip.getBullets()) {
-			b.render(this.gc);
-		}
-	}
-	private void moveBullets(){
-		//create a local arraylist of Bullets for the bullets 'shot' by the ship
-		ArrayList<Bullet> bList = this.myShip.getBullets();
-
-		//Loop through the bullet list and check whether a bullet is still visible.
-		for(int i = 0; i < bList.size(); i++){
-			Bullet b = bList.get(i);
-
-			 * If a bullet is visible, move the bullet, else, remove the bullet from the bullet array list.
-
-			if (b.visible) {
-				b.move();
-			} else {
-				bList.remove(b); // MARK: remove bullet from arraylist
-			}
-		}
-	}
-	private void bulletHitsFish() {
-		try {
-			for (int i=0; i<this.fishes.size(); i++) {
-				for (int j=0; j<this.myShip.getBullets().size(); j++) {
-					if (this.myShip.getBullets().get(j).collidesWith(this.fishes.get(i))) {
-						this.fishes.get(i).setAlive(false);
-						this.myShip.getBullets().get(j).setVisible(false);
-						GameTimer.fishKilled += 1;
-					}
-				}
-			}
-		} catch (Exception e) {}
-	}
-
-	// BOSS METHODS
-	private void spawnBoss() {
-		if (GameTimer.bossSpawned == false) {
-			this.boss = new Boss(250,250);
-			GameTimer.bossSpawned = true;
-		}
-	}
-	private void renderBoss() {
-		this.boss.render(this.gc);
-	}
-	private void moveBoss() {
-		if (this.boss.isAlive()) {
-			this.boss.move();
-		}
-	}
-	private void controlBoss(long currentSec, long startMove, long currentNanoTime) {
-		if (GameTimer.bossDead == false) {
-			if ((currentSec - startMove) > 1){
-				this.moveBoss();
-				this.boss.shoot();
-				this.startMove = currentNanoTime;
-			}
-			this.textRenderBoss(this.gc, this.boss.getX(), this.boss.getY());
-			this.moveBossBullets();
-			this.renderBossBullets();
-			this.bulletHitsBoss();
-			this.renderBoss();
-		}
-	}
-	private void checkBossDeath() {
-		if (this.boss.getHealth() <= 0) {
-			GameTimer.fishKilled += 1;
-			this.boss.setAlive(false);
-			GameTimer.bossDead = true;
-		}
-	}
-	private void renderBossBullets() {
-
-		 * Loop through the bullets arraylist of myShip
-		 *				and render each bullet to the canvas
-
-		for (BossBullet b : this.boss.getBullets()) {
-			b.render(this.gc);
-		}
-	}
-	private void moveBossBullets(){
-		//create a local arraylist of Bullets for the bullets 'shot' by the ship
-		ArrayList<BossBullet> bList = this.boss.getBullets();
-
-		//Loop through the bullet list and check whether a bullet is still visible.
-		for(int i = 0; i < bList.size(); i++){
-			BossBullet b = bList.get(i);
-
-			 *  If a bullet is visible, move the bullet, else, remove the bullet from the bullet array list.
-
-			if (b.visible) {
-				b.move();
-			} else {
-				bList.remove(b); // MARK: remove bullet from arraylist
-			}
-		}
-	}
-
-	*/
 
 	// BUFF METHODS
 	private void renderBuffs() {
@@ -407,8 +286,8 @@ public class GameTimer extends AnimationTimer{
 		GameBuff buff = new GameBuff(pos.nextInt(GameStage.WINDOW_WIDTH/2), pos.nextInt(GameStage.WINDOW_HEIGHT-50), this.myShip);
 		this.buffs.add(buff);
 	}
-	private void spawnBuffsEvery10(long currentSec, long startSpawnSecBuff, long currentNanoTime) {
-		if ((currentSec - startSpawnSecBuff) > 9) { // 10 seconds - old 9
+	private void spawnBuffsEvery8(long currentSec, long startSpawnSecBuff, long currentNanoTime) {
+		if ((currentSec - startSpawnSecBuff) > 5) {
 			spawnBuffs();
 			this.startSpawnBuff = currentNanoTime;
 		}
@@ -437,34 +316,7 @@ public class GameTimer extends AnimationTimer{
 			}
 		} catch (Exception e) {}
 	}
-	/* (OLD CODE)
-	private void BossBulletHitsFish() {
-		try {
-			for (int i=0; i<this.boss.getBullets().size(); i++) {
-				if (this.boss.getBullets().get(i).collidesWith(this.myShip)) {
 
-					// if ship is not immortal
-					if (!this.myShip.getImmortal()) {
-						this.myShip.setHealth(this.myShip.getHealth()
-								- this.boss.getBullets().get(i).getBulletDamage());
-					}
-
-					this.boss.getBullets().get(i).setVisible(false);
-				}
-			}
-		} catch (Exception e) {}
-	}
-	private void bulletHitsBoss() {
-		try {
-			for (int i=0; i<this.myShip.getBullets().size(); i++) {
-				if (this.myShip.getBullets().get(i).collidesWith(this.boss)) {
-					this.myShip.getBullets().get(i).setVisible(false);
-					this.boss.setHealth(this.boss.getHealth() - this.myShip.getBullets().get(i).getBulletDamage());
-				}
-			}
-		} catch (Exception e) {}
-	}
-	*/
 	private void fishHitsShip() {
 		try {
 			for (int i=0; i<this.fishes.size(); i++) {
@@ -493,7 +345,6 @@ public class GameTimer extends AnimationTimer{
             		} else {
             			myShip.loadImage(Ship.SHIP_IMAGE_WALK);
             		}
-
             	}
                 moveMyShip(code);
 			}
@@ -501,14 +352,6 @@ public class GameTimer extends AnimationTimer{
 
 		this.theScene.setOnKeyReleased(new EventHandler<KeyEvent>(){
             public void handle(KeyEvent e){
-            	/*  (OLD CODE)
-            	if (hasMask) {
-            		myShip.loadImage(Ship.MASK_IMAGE_STAND);
-            	} else {
-            		myShip.loadImage(Ship.SHIP_IMAGE_STAND);
-            	}
-            	*/
-
             	// ship is always walking for CMSC 137
             	if (hasMask) {
             		myShip.loadImage(Ship.MASK_IMAGE_WALK);
@@ -526,16 +369,9 @@ public class GameTimer extends AnimationTimer{
 	// move the ship depending on the key pressed
 	private void moveMyShip(KeyCode ke) {
 		if(ke==KeyCode.UP) this.myShip.setDY(-3);
-
 		if(ke==KeyCode.LEFT) this.myShip.setDX(-3);
-
 		if(ke==KeyCode.DOWN) this.myShip.setDY(3);
-
  		if(ke==KeyCode.RIGHT) this.myShip.setDX(3);
-
-		if(ke==KeyCode.SPACE) this.myShip.shoot();
-
-		//System.out.println(ke+" key pressed.");
    	}
 
 	// stop the ship's movement; set the ship's DX and DY to 0
@@ -544,20 +380,18 @@ public class GameTimer extends AnimationTimer{
 		this.myShip.setDY(0);
 	}
 
-	// TODO: update check game over (by distance)
 	private void checkGameOver(long gameTime) {
-		/* (OLD CODE)
-
 		if (this.myShip.getHealth() <= 0) {
 			this.myShip.die();
 			GameOverStage gameover = new GameOverStage(0);
 			GameStage.stage.setScene(gameover.getScene());
 			this.stop();
-		} else if (GameTimer.bossDead && gameTime >= winGameTime) {
-			GameOverStage gameover = new GameOverStage(1);
+		} else if (this.myShip.getDistance() >= this.maxDistance) {
+			this.myShip.setWin();
+			GameOverStage gameover = new GameOverStage(0);
 			GameStage.stage.setScene(gameover.getScene());
 			this.stop();
-		}*/
+		}
 	}
 
 	/*
@@ -581,30 +415,23 @@ public class GameTimer extends AnimationTimer{
 			this.gc.setFont(Font.font("Verdana", 20));
 		}
 	}
-	// render text (health, time, fish killed)
+
+	// render text (speed, distance, health)
 	private void textRender(GraphicsContext gc, long currentSec) {
-        //this.gc.setTextAlign(TextAlignment.LEFT);
-        //this.gc.setTextBaseline(VPos.CENTER);
         this.gc.fillText("Speed: " + this.myShip.getSpeed(), this.hpTextX, this.textY);
-        this.gc.fillText("Distance: " + (currentSec * this.myShip.getSpeed()), this.timeTextX, this.textY); //distance= speed*time
-//        this.gc.fillText("Virus Killed: " + GameTimer.fishKilled, this.fishKilledTextX, this.textY);
+        this.myShip.setDistance(currentSec);
+        this.gc.fillText("Distance: " + this.myShip.getDistance(), this.timeTextX, this.textY);
+        this.gc.fillText("Health: " + this.myShip.getHealth(), this.healthTextX, this.textY);
     }
 
-	/*
-	private void textRenderBoss(GraphicsContext gc, int bossX, int bossY) {
-		this.gc.fillText("Boss Health: " + this.boss.getHealth(), bossX-60, bossY+10);
-	}
 	private void textRenderImmortal(GraphicsContext gc, int seconds) {
 		int secondsPassed = seconds+1;
 		this.gc.fillText("VACCINATED! " + secondsPassed, this.myShip.getX()-60, this.myShip.getY());
 	}
-	*/
 
 	// GETTER
 	public ArrayList<GameTimeSeconds> getTimers() {
 		return this.timers;
 	}
-
-
 }
 
