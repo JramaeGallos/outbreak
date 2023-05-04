@@ -8,10 +8,13 @@ import stage.GameStage;
 public class Ship extends Sprite{
 
 	private String name;
+	private int speed;
 	private int health;
-	private final int initialHealth = 100;
+	private int distance;
+	private final int initialSpeed = 1;
 	private boolean alive;
 	private boolean immortal;
+	private boolean won;
 
 	private ArrayList<Bullet> bullets;
 	public final static Image SHIP_IMAGE_STAND = new Image("images/doctor_stand.png",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
@@ -19,17 +22,20 @@ public class Ship extends Sprite{
 	public final static Image MASK_IMAGE_STAND = new Image("images/doctor_mask_stand.png",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 	public final static Image MASK_IMAGE_WALK = new Image("images/doctor_mask_walk.gif",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 
-	private final static int SHIP_HEIGHT = 87; // scaled down from 525
-	private final static int SHIP_WIDTH = 50; // scaled down from 300
+	private final static int SHIP_HEIGHT = 150; // scaled down from 525
+	private final static int SHIP_WIDTH = 90; // scaled down from 300
 
 	// CONSTRUCTOR
 	public Ship(String name, int x, int y){
 		super(x,y);
 		this.name = name;
 		this.immortal = false;
-		this.health = this.initialHealth;
+		this.speed = this.initialSpeed;
 		this.alive = true;
 		this.bullets = new ArrayList<Bullet>();
+		this.health = 100;
+		this.distance = 0;
+		this.won = false;
 
 		// this.loadImage(Ship.SHIP_IMAGE_STAND);
 		this.loadImage(MASK_IMAGE_WALK);  // ship walks initially
@@ -43,23 +49,43 @@ public class Ship extends Sprite{
 	public String getName(){
 		return this.name;
 	}
-	public int getHealth() {
+	public int getSpeed() {
+		return this.speed;
+	}
+	public int getHealth(){
 		return this.health;
 	}
+	public int getDistance(){
+		return this.distance;
+	}
+
+	// If player encounter virus, health - 10
+	// If health is <= 0, alive = false
 	void gotHit(Fish virus) {
-		this.health -= virus.getDamage();
+		if (virus.getType() == 6) {
+			this.setSpeed(1);
+		} else{
+			this.health -= 10;
+			if(this.health <= 0){
+				this.alive = false;
+			}
+		}
 	}
-	//method that will get the bullets 'shot' by the ship
-	public ArrayList<Bullet> getBullets(){
-		return this.bullets;
-	}
+
 	boolean getImmortal() {
 		return this.immortal;
 	}
 
 	// SETTERS
-	public void setHealth(int health) {
-		this.health = health;
+	public void setSpeed(int type) {
+		if (type == 0){ // To increase
+			this.speed = this.speed * 2;
+		} else { //To decrease
+			// If speed is 1, then will not change
+			if (this.speed > 1){
+				this.speed = this.speed / 2;
+			}
+		}
 	}
 	public void die() {
     	this.alive = false;
@@ -67,18 +93,16 @@ public class Ship extends Sprite{
 	void setImmortal(boolean value) {
 		this.immortal = value;
 	}
-
-	//method called if spacebar is pressed
-	public void shoot(){
-		//compute for the x and y initial position of the bullet
-		int x = (int) (this.x); // + this.width+20
-		int y = (int) (this.y + this.height/2);
-		/*
-		 * TODO: Instantiate a new bullet and add it to the bullets arraylist of ship
-		 */ // MARK: creating the bullet
-		Bullet bullet = new Bullet(x, y);
-		this.bullets.add(bullet);
-    }
+	// If player encounter medicine, health + 20
+	public void setHealth(){
+		this.health += 20;
+	}
+	public void setDistance(long time){
+		this.distance = (int) (this.speed * time);
+	}
+	public void setWin(){
+		this.won = true;
+	}
 
 	//method called if up/down/left/right arrow key is pressed.
 	public void move() {
@@ -101,9 +125,5 @@ public class Ship extends Sprite{
 		} else {
 			this.y += this.dy; // MARK: add the dy (vertical move value)
 		}
-
 	}
-
-
-
 }

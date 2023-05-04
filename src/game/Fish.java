@@ -7,8 +7,10 @@ import javafx.scene.image.Image;
 // fish enemy class (virus)
 public class Fish extends Sprite {
 	public static final int MAX_FISH_SPEED = 3; // speed varies by 3
-	public static final int MAX_FISH_DAMAGE = 20;
-	public static final int MIN_FISH_DAMAGE = 10;
+	public static final int MAX_FISH_DAMAGE = 3;
+	public static final int MIN_FISH_DAMAGE = 1;
+
+	private Ship myShip;
 
 	// MARK: FISH IMAGES
 	public final static Image FISH_IMAGE1 = new Image("images/virus_1.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
@@ -17,16 +19,12 @@ public class Fish extends Sprite {
 	public final static Image FISH_IMAGE4 = new Image("images/virus_4.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE5 = new Image("images/virus_5.png",Fish.FISH_WIDTH+40,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE6 = new Image("images/virus_6.png",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
-	public final static Image BOSS_IMAGE = new Image("images/virus_boss.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
+	public final static Image PUDDLE = new Image("images/puddle.png",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 	public final static int FISH_WIDTH=70;
 
 	private int fishType;
 	private boolean alive;
 	private int speed;
-	private int damage;
-
-	//attribute that will determine if a fish will initially move to the right
-	//private boolean moveRight;
 
 	// CONSTRUCTOR
 	Fish(int x, int y){
@@ -37,10 +35,8 @@ public class Fish extends Sprite {
 		 */
 		this.alive = true;
 		Random randomType = new Random();
-		Random randomSpeed = new Random();
-		Random randomDamage = new Random();
 
-		this.fishType = randomType.nextInt(6);
+		this.fishType = randomType.nextInt(7);
 		// set fish image depending on type (random)
 		switch (this.fishType) {
 			case 0: this.loadImage(Fish.FISH_IMAGE1);
@@ -55,16 +51,25 @@ public class Fish extends Sprite {
 						break;
 			case 5: this.loadImage(Fish.FISH_IMAGE6);
 						break;
+			case 6: this.loadImage(Fish.PUDDLE);
+			//case 7: fish.cone *TODO
+			//case 8: fish.stone
+				break;
 		}
+		this.fishSpeed(this.fishType);
 
-		this.speed = randomSpeed.nextInt(Fish.MAX_FISH_SPEED+1 - 1) + 1; // MARK: MAX+1 since nextInt is exclusive right
-		//this.moveRight = random.nextBoolean();					// MARK: another + 1 to start with 1
-		//this.damage = randomDamage.nextInt(Fish.MAX_FISH_DAMAGE+1) + 10; // MARK: random damage from 10 to 30
-		this.damage = randomDamage.nextInt(Fish.MAX_FISH_DAMAGE+1 - MIN_FISH_DAMAGE) + MIN_FISH_DAMAGE;
+	}
+
+	void fishSpeed(int type){
+		if(type<=5){ //viruses that affects health
+			//random speed
+			Random randomSpeed = new Random();
+			this.speed = randomSpeed.nextInt(Fish.MAX_FISH_SPEED+1 - 1) + 1; // MARK: MAX+1 since nextInt is exclusive right
+		}
 	}
 
 	//method that changes the x position of the fish
-	void move(){
+	void move(int type){
 		/*
 		 * TODO: 				If moveRight is true and if the fish hasn't reached the right boundary yet,
 		 *    						move the fish to the right by changing the x position of the fish depending on its speed
@@ -84,8 +89,8 @@ public class Fish extends Sprite {
 //		} else if (this.x <= 0) {
 //			this.moveRight = !this.moveRight;
 //		}
-
-		this.x -= this.speed;
+		if(type == 0) this.x -= this.speed;  //virus fish: random speed
+		else this.x -= type;				//obstacle fish: speed of the ship
 		// if fish reaches the left bound
 		if (this.x <= 0 - FISH_WIDTH) { // to consider the image size
 			this.alive = false;
@@ -96,8 +101,8 @@ public class Fish extends Sprite {
 	public boolean isAlive() {
 		return this.alive;
 	}
-	public int getDamage() {
-		return this.damage;
+	public int getType() {
+		return this.fishType;
 	}
 
 	// SETTER
