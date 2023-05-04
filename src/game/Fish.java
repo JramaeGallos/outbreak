@@ -10,6 +10,8 @@ public class Fish extends Sprite {
 	public static final int MAX_FISH_DAMAGE = 3;
 	public static final int MIN_FISH_DAMAGE = 1;
 
+	private Ship myShip;
+
 	// MARK: FISH IMAGES
 	public final static Image FISH_IMAGE1 = new Image("images/virus_1.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE2 = new Image("images/virus_2.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
@@ -33,7 +35,6 @@ public class Fish extends Sprite {
 		 */
 		this.alive = true;
 		Random randomType = new Random();
-		Random randomSpeed = new Random();
 
 		this.fishType = randomType.nextInt(7);
 		// set fish image depending on type (random)
@@ -51,14 +52,24 @@ public class Fish extends Sprite {
 			case 5: this.loadImage(Fish.FISH_IMAGE6);
 						break;
 			case 6: this.loadImage(Fish.PUDDLE);
+			//case 7: fish.cone *TODO
+			//case 8: fish.stone
 				break;
 		}
+		this.fishSpeed(this.fishType);
 
-		this.speed = randomSpeed.nextInt(Fish.MAX_FISH_SPEED+1 - 1) + 1; // MARK: MAX+1 since nextInt is exclusive right
+	}
+
+	void fishSpeed(int type){
+		if(type<=5){ //viruses that affects health
+			//random speed
+			Random randomSpeed = new Random();
+			this.speed = randomSpeed.nextInt(Fish.MAX_FISH_SPEED+1 - 1) + 1; // MARK: MAX+1 since nextInt is exclusive right
+		}
 	}
 
 	//method that changes the x position of the fish
-	void move(){
+	void move(int type){
 		/*
 		 * TODO: 				If moveRight is true and if the fish hasn't reached the right boundary yet,
 		 *    						move the fish to the right by changing the x position of the fish depending on its speed
@@ -78,8 +89,8 @@ public class Fish extends Sprite {
 //		} else if (this.x <= 0) {
 //			this.moveRight = !this.moveRight;
 //		}
-
-		this.x -= this.speed;
+		if(type == 0) this.x -= this.speed;  //virus fish: random speed
+		else this.x -= type;				//obstacle fish: speed of the ship
 		// if fish reaches the left bound
 		if (this.x <= 0 - FISH_WIDTH) { // to consider the image size
 			this.alive = false;

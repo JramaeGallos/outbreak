@@ -7,7 +7,7 @@ public class RoadLines extends Sprite {
 	private int speed;
 	private boolean alive;
 	public static final int MAX_LINE_SPEED = 3;
-	public static final int LONG_LINE_WIDTH = 800;
+	public static final int LONG_LINE_WIDTH = 850;
 	public static final int LONG_LINE_HEIGHT = 60;
 	public static final int SHORT_LINE_WIDTH = 100;
 	public static final int SHORT_LINE_HEIGHT = 60;
@@ -27,8 +27,8 @@ public class RoadLines extends Sprite {
 		}
 	}
 
-	public void move(){
-		this.x -= this.speed;
+	public void move(int ship_speed){
+		this.x -= ship_speed;
 		// if fish reaches the left bound
 		if (this.x <= 0 - this.img.getWidth()) { // to consider the image size
 			this.alive = false;
