@@ -35,7 +35,7 @@ public class GameTimer extends AnimationTimer{
 	private final int timeTextX = 300;
 	private final int healthTextX = 570;
 	private final int textY = 40;
-	private final int maxDistance = 200;
+	private final int maxDistance = 500;
 
 	private long timeReference;
 	private long startSpawn;
@@ -95,6 +95,7 @@ public class GameTimer extends AnimationTimer{
 
 		// MARK: clear canvas
 		this.gc.clearRect(0, 0, GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT);
+		System.out.println(this.myShip.getSpeed());
 
 		// MARK: stores game time in seconds
 		long currentSec = TimeUnit.NANOSECONDS.toSeconds(currentNanoTime);
@@ -325,9 +326,13 @@ public class GameTimer extends AnimationTimer{
 		try {
 			for (int i=0; i<this.fishes.size(); i++) {
 				if (this.myShip.collidesWith(this.fishes.get(i))) {
-					if (!this.myShip.getImmortal()) {
-						this.myShip.gotHit(this.fishes.get(i));
-					}
+
+					// NOTE: Move the implementation of immortal in Ship.gotHit() method
+					// if (!this.myShip.getImmortal()) {
+					this.myShip.gotHit(this.fishes.get(i));
+					// }
+
+
 					this.fishes.get(i).setAlive(false);
 				}
 			}
@@ -426,12 +431,15 @@ public class GameTimer extends AnimationTimer{
         this.myShip.setDistance(currentSec);
         this.gc.fillText("Distance: " + this.myShip.getDistance(), this.timeTextX, this.textY);
         this.gc.fillText("Health: " + this.myShip.getHealth(), this.healthTextX, this.textY);
+        if (this.myShip.getImmortal()) {
+        	this.gc.fillText("IMMUNE!", this.myShip.getX()-10, this.myShip.getY());
+        }
     }
 
-	private void textRenderImmortal(GraphicsContext gc, int seconds) {
-		int secondsPassed = seconds+1;
-		this.gc.fillText("VACCINATED! " + secondsPassed, this.myShip.getX()-60, this.myShip.getY());
-	}
+//	private void textRenderImmortal(GraphicsContext gc, int seconds) {
+//		int secondsPassed = seconds+1;
+//		this.gc.fillText("VACCINATED! " + secondsPassed, this.myShip.getX()+60, this.myShip.getY());
+//	}
 
 	// GETTER
 	public ArrayList<GameTimeSeconds> getTimers() {

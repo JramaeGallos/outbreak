@@ -13,14 +13,18 @@ public class Fish extends Sprite {
 	private Ship myShip;
 
 	// MARK: FISH IMAGES
+	public final static int FISH_WIDTH=70;
 	public final static Image FISH_IMAGE1 = new Image("images/virus_1.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE2 = new Image("images/virus_2.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE3 = new Image("images/virus_3.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE4 = new Image("images/virus_4.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE5 = new Image("images/virus_5.png",Fish.FISH_WIDTH+40,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE6 = new Image("images/virus_6.png",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
+
+	// MARK: OBSTACLE IMAGES
 	public final static Image PUDDLE = new Image("images/puddle.png",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
-	public final static int FISH_WIDTH=70;
+	public final static Image CONE = new Image("images/cone.png",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
+	public final static Image STONE = new Image("images/stone.png",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 
 	private int fishType;
 	private boolean alive;
@@ -36,7 +40,7 @@ public class Fish extends Sprite {
 		this.alive = true;
 		Random randomType = new Random();
 
-		this.fishType = randomType.nextInt(7);
+		this.fishType = randomType.nextInt(9);
 		// set fish image depending on type (random)
 		switch (this.fishType) {
 			case 0: this.loadImage(Fish.FISH_IMAGE1);
@@ -52,9 +56,11 @@ public class Fish extends Sprite {
 			case 5: this.loadImage(Fish.FISH_IMAGE6);
 						break;
 			case 6: this.loadImage(Fish.PUDDLE);
-			//case 7: fish.cone *TODO
-			//case 8: fish.stone
-				break;
+						break;
+			case 7: this.loadImage(Fish.CONE);
+						break;
+			case 8: this.loadImage(Fish.STONE);
+						break;
 		}
 		this.fishSpeed(this.fishType);
 
