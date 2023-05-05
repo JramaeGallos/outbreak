@@ -38,7 +38,7 @@ public class Ship extends Sprite{
 		this.won = false;
 
 		// this.loadImage(Ship.SHIP_IMAGE_STAND);
-		this.loadImage(MASK_IMAGE_WALK);  // ship walks initially
+		this.loadImage(SHIP_IMAGE_WALK);  // ship walks initially
 	}
 
 	// GETTERS
@@ -62,12 +62,25 @@ public class Ship extends Sprite{
 	// If player encounter virus, health - 10
 	// If health is <= 0, alive = false
 	void gotHit(Fish virus) {
-		if (virus.getType() == 6) {
+
+		// if obstacle
+		if (virus.getType() == 6 || virus.getType() == 7 || virus.getType() == 8) {
 			this.setSpeed(1);
+			System.out.println("OBSTACLE!");
+			System.out.println("OBSTACLE!");
+			System.out.println("OBSTACLE!");
+			System.out.println("OBSTACLE!");
+			System.out.println("OBSTACLE!");
+
+		// if virus
 		} else{
-			this.health -= 10;
-			if(this.health <= 0){
-				this.alive = false;
+
+			// check first if immortal
+			if (!this.getImmortal()) {
+				this.health -= 10;
+				if(this.health <= 0){
+					this.alive = false;
+				}
 			}
 		}
 	}
@@ -82,8 +95,8 @@ public class Ship extends Sprite{
 			this.speed = this.speed * 2;
 		} else { //To decrease
 			// If speed is 1, then will not change
-			if (this.speed > 1){
-				this.speed = this.speed / 2;
+			if (this.speed >= 2){
+				this.speed = (int) (this.speed / 2);
 			}
 		}
 	}
@@ -103,7 +116,6 @@ public class Ship extends Sprite{
 	public void setWin(){
 		this.won = true;
 	}
-
 	//method called if up/down/left/right arrow key is pressed.
 	public void move() {
 		/*
