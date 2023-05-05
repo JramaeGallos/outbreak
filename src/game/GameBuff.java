@@ -9,14 +9,17 @@ public class GameBuff extends Sprite {
 
 	private Ship affectedShip;
 	private int type;
+	private boolean alive;
 
-	public final static Image FACEMASK = new Image("images/buff_facemask.png",93,35,false,false);
-	private static final Image ENERGY_DRINK = new Image("images/buff_energydrink.png",35,50,false,false);
-	private static final Image VACCINE = new Image("images/buff_vaccine.png",50,50,false,false);
+	public final static int BUFF_WIDTH = 60;
+	public final static Image FACEMASK = new Image("images/buff_facemask.png",BUFF_WIDTH,BUFF_WIDTH-20,false,false);
+	private static final Image ENERGY_DRINK = new Image("images/buff_energydrink.png",BUFF_WIDTH-20,BUFF_WIDTH-10,false,false);
+	private static final Image VACCINE = new Image("images/buff_vaccine.png",BUFF_WIDTH,BUFF_WIDTH,false,false);
 
 	// CONSTRUCTOR
 	GameBuff(int x, int y, Ship affectedShip) {
 		super(x,y);
+		this.alive = true;
 		this.affectedShip = affectedShip;
 		Random type = new Random();
 		this.type = type.nextInt(3);
@@ -32,9 +35,6 @@ public class GameBuff extends Sprite {
 	// called in GameTimer when buff is picked up
 	void affectShip(int type) {
 		if (type == 0) {
-			/*
-			 * For checking
-			 */
 			this.affectedShip.setImmortal(true);
 		} else if (type == 1) {
 			this.affectedShip.setSpeed(0);
@@ -43,13 +43,29 @@ public class GameBuff extends Sprite {
 		}
 	}
 
+	//method that changes the x position of the buff
+	void move(int speed){
+		this.x -= speed;
+		if (this.x <= 0 - 60) {
+			this.alive = false;
+		}
+	}
+
 	// GETTER
 	public int getType() {
 		return this.type;
 	}
 
+	public boolean isAlive() {
+		return this.alive;
+	}
+
 	// SETTER
 	public void setAffectedShip(Ship ship) {
 		this.affectedShip = ship;
+	}
+
+	public void setAlive(boolean alive) {
+		this.alive = alive;
 	}
 }

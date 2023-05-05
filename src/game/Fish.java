@@ -13,7 +13,7 @@ public class Fish extends Sprite {
 	private Ship myShip;
 
 	// MARK: FISH IMAGES
-	public final static int FISH_WIDTH=70;
+	public final static int FISH_WIDTH=50;
 	public final static Image FISH_IMAGE1 = new Image("images/virus_1.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE2 = new Image("images/virus_2.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
 	public final static Image FISH_IMAGE3 = new Image("images/virus_3.gif",Fish.FISH_WIDTH,Fish.FISH_WIDTH,false,false);
@@ -31,9 +31,9 @@ public class Fish extends Sprite {
 	private int speed;
 
 	// CONSTRUCTOR
-	Fish(int x, int y){
+	Fish(int x, int y, Ship ship){
 		super(x,y);
-
+		this.myShip = ship;
 		/*
 		 *TODO: Randomize speed of fish and moveRight's initial value
 		 */
@@ -70,7 +70,7 @@ public class Fish extends Sprite {
 		if(type<=5){ //viruses that affects health
 			//random speed
 			Random randomSpeed = new Random();
-			this.speed = randomSpeed.nextInt(Fish.MAX_FISH_SPEED+1 - 1) + 1; // MARK: MAX+1 since nextInt is exclusive right
+			this.speed = randomSpeed.nextInt(Fish.MAX_FISH_SPEED+1 - 1) + this.myShip.getSpeed(); // MARK: MAX+1 since nextInt is exclusive right
 		}
 	}
 

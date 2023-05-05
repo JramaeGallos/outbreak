@@ -127,9 +127,6 @@ public class GameTimer extends AnimationTimer{
 		this.removeBuffsEvery5(currentSec, startSpawnSecBuff);
 		this.collideBuff();
 
-		/* (Ley's note:)
-		 * Check is working properly
-		 */
 //		if (this.myShip.getImmortal() == true) {
 //			// one-time starting of immortal timer
 //			if (!GameTimer.ImmoTimerStarted) {
@@ -158,6 +155,7 @@ public class GameTimer extends AnimationTimer{
 		 */
 		// this.moveBullets();
 		this.moveFishes();
+		this.moveBuff();
 		this.myShip.render(this.gc);  //render the ship
 
 		/*
@@ -178,8 +176,6 @@ public class GameTimer extends AnimationTimer{
 		for(int i=0;i<= howMany;i++){
 			int x = -0;
 			int y = (GameStage.WINDOW_HEIGHT - (loc * i)) ;
-
-			 // Add a new object Fish to the fishes arraylist
 			RoadLines initLine= new RoadLines(x,y,0);
 			this.initLines.add(initLine);
 		}
@@ -192,13 +188,12 @@ public class GameTimer extends AnimationTimer{
 	}
 
 	private void moveinitLines(){
-		//Loop through the fishes arraylist
 		for(int i = 0; i < this.initLines.size(); i++){
 			RoadLines r = this.initLines.get(i);
 			if (r.isAlive()) {
 				r.move(this.myShip.getSpeed());
 			} else {
-				this.initLines.remove(r); // remove fish from arraylist
+				this.initLines.remove(r);
 			}
 		}
 	}
@@ -228,13 +223,12 @@ public class GameTimer extends AnimationTimer{
 	}
 
 	private void moveLines(){
-		//Loop through the fishes arraylist
 		for(int i = 0; i < this.lines.size(); i++){
 			RoadLines r = this.lines.get(i);
 			if (r.isAlive()) {
 				r.move(this.myShip.getSpeed());
 			} else {
-				this.lines.remove(r); // remove fish from arraylist
+				this.lines.remove(r);
 			}
 		}
 	}
@@ -249,15 +243,15 @@ public class GameTimer extends AnimationTimer{
 		Random r = new Random();
 		for(int i = 0; i < howMany; i++){
 			int x = GameStage.WINDOW_WIDTH;
-			int y = r.nextInt(GameStage.WINDOW_HEIGHT-Fish.FISH_WIDTH);
+			int y = r.nextInt(5)*80 + 80;
 
 			 // Add a new object Fish to the fishes arraylist
-			Fish fish = new Fish(x,y);
+			Fish fish = new Fish(x,y, this.myShip);
 			this.fishes.add(fish);
 		}
 	}
 	private void spawnFishesEvery3Sec(long currentSec, long startSec, long currentNanoTime) {
-		if((currentSec - startSec) > 3){
+		if((currentSec - startSec) > 1){
 			this.spawnFishes(1);
 			this.startSpawn = currentNanoTime;
 		}
@@ -284,7 +278,7 @@ public class GameTimer extends AnimationTimer{
 	}
 	private void spawnBuffs() {
 		Random pos = new Random();
-		GameBuff buff = new GameBuff(pos.nextInt(GameStage.WINDOW_WIDTH/2), pos.nextInt(GameStage.WINDOW_HEIGHT-50), this.myShip);
+		GameBuff buff = new GameBuff((GameStage.WINDOW_WIDTH - 200), pos.nextInt(5)*80 + 80, this.myShip);
 		this.buffs.add(buff);
 	}
 	private void spawnBuffsEvery8(long currentSec, long startSpawnSecBuff, long currentNanoTime) {
@@ -293,8 +287,20 @@ public class GameTimer extends AnimationTimer{
 			this.startSpawnBuff = currentNanoTime;
 		}
 	}
+
+	private void moveBuff(){
+		for(int i = 0; i < this.buffs.size(); i++){
+			GameBuff b = this.buffs.get(i);
+			if (b.isAlive()) {
+				b.move(this.myShip.getSpeed());  //obstacle fish - speed is in sync with the background speed
+			} else {
+				this.buffs.remove(b);
+			}
+		}
+	}
+
 	private void removeBuffsEvery5(long currentSec, long startSpawnSecBuff) {
-		if (currentSec - startSpawnSecBuff == 3) { // old 5
+		if (currentSec - startSpawnSecBuff == 10) {
 			for (int i=0; i<this.buffs.size(); i++) {
 				if(this.buffs.get(i).getType()==0){
 					this.hasMask = false;
@@ -397,7 +403,7 @@ public class GameTimer extends AnimationTimer{
 			this.stop();
 		} else if (this.myShip.getDistance() >= this.maxDistance) {
 			this.myShip.setWin();
-			GameOverStage gameover = new GameOverStage(0);
+			GameOverStage gameover = new GameOverStage(1);
 			GameStage.stage.setScene(gameover.getScene());
 			this.stop();
 		}
