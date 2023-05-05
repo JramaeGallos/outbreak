@@ -22,8 +22,8 @@ public class Ship extends Sprite{
 	public final static Image MASK_IMAGE_STAND = new Image("images/doctor_mask_stand.png",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 	public final static Image MASK_IMAGE_WALK = new Image("images/doctor_mask_walk.gif",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 
-	private final static int SHIP_HEIGHT = 150; // scaled down from 525
-	private final static int SHIP_WIDTH = 90; // scaled down from 300
+	private final static int SHIP_HEIGHT = 90; // scaled down from 525
+	private final static int SHIP_WIDTH = 70; // scaled down from 300
 
 	// CONSTRUCTOR
 	public Ship(String name, int x, int y){
@@ -32,7 +32,6 @@ public class Ship extends Sprite{
 		this.immortal = false;
 		this.speed = this.initialSpeed;
 		this.alive = true;
-		this.bullets = new ArrayList<Bullet>();
 		this.health = 100;
 		this.distance = 0;
 		this.won = false;
@@ -111,7 +110,9 @@ public class Ship extends Sprite{
 		this.health += 20;
 	}
 	public void setDistance(long time){
-		this.distance = (int) (this.speed * time);
+		if ((int) (this.speed * time) > this.distance){
+			this.distance = (int) (this.speed * time);
+		}
 	}
 	public void setWin(){
 		this.won = true;
@@ -132,8 +133,8 @@ public class Ship extends Sprite{
 
 		if (this.y + this.dy >= GameStage.WINDOW_HEIGHT-SHIP_HEIGHT) { // MARK: if ship goes to SOUTH bound (add dx for the program to know if ship will go beyond the bounds)
 			this.y = GameStage.WINDOW_HEIGHT-SHIP_HEIGHT; // MARK: subtract SHIP_WIDTH to take into consideration the png size of ship
-		} else if (this.y + this.dy < 0) { // MARK: if ship goes to NORTH bound
-			this.y = 0;
+		} else if (this.y + this.dy < 50) {
+			this.y = 50;
 		} else {
 			this.y += this.dy; // MARK: add the dy (vertical move value)
 		}

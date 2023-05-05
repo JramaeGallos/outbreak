@@ -59,7 +59,7 @@ public class GameOverStage {
 
         this.gc.setFill(Color.CHARTREUSE); //set font color of text
 		if (num == 1) { //for win
-			this.gc.fillText("YOU WIN!\nKILLED " + GameTimer.fishKilled + " VIRUSES", Math.round(canvas.getWidth()/2), 100); //old y = 150
+			this.gc.fillText("YOU WIN!", Math.round(canvas.getWidth()/2), 150);
 		} else { //for lose
 			this.gc.fillText("GAME OVER!", Math.round(canvas.getWidth()/2), 150);
 		}
