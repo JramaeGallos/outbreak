@@ -55,7 +55,6 @@ public class GameBuff extends Sprite {
 	public int getType() {
 		return this.type;
 	}
-
 	public boolean isAlive() {
 		return this.alive;
 	}
@@ -64,7 +63,6 @@ public class GameBuff extends Sprite {
 	public void setAffectedShip(Ship ship) {
 		this.affectedShip = ship;
 	}
-
 	public void setAlive(boolean alive) {
 		this.alive = alive;
 	}

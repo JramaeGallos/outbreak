@@ -4,11 +4,9 @@ import java.util.Random; // MARK: imported random for fish speed
 
 import javafx.scene.image.Image;
 
-// fish enemy class (virus)
+// enemy class (virus)
 public class Fish extends Sprite {
-	public static final int MAX_FISH_SPEED = 3; // speed varies by 3
-	public static final int MAX_FISH_DAMAGE = 3;
-	public static final int MIN_FISH_DAMAGE = 1;
+	public static final int MAX_FISH_SPEED = 5;
 
 	private Ship myShip;
 
@@ -34,9 +32,6 @@ public class Fish extends Sprite {
 	Fish(int x, int y, Ship ship){
 		super(x,y);
 		this.myShip = ship;
-		/*
-		 *TODO: Randomize speed of fish and moveRight's initial value
-		 */
 		this.alive = true;
 		Random randomType = new Random();
 
@@ -63,38 +58,18 @@ public class Fish extends Sprite {
 						break;
 		}
 		this.fishSpeed(this.fishType);
-
 	}
 
 	void fishSpeed(int type){
-		if(type<=5){ //viruses that affects health
+		if(type <= 5){ //viruses that affects health
 			//random speed
 			Random randomSpeed = new Random();
-			this.speed = randomSpeed.nextInt(Fish.MAX_FISH_SPEED+1 - 1) + this.myShip.getSpeed(); // MARK: MAX+1 since nextInt is exclusive right
+			this.speed = randomSpeed.nextInt(Fish.MAX_FISH_SPEED+1) + this.myShip.getSpeed(); // MARK: MAX+1 since nextInt is exclusive right
 		}
 	}
 
 	//method that changes the x position of the fish
 	void move(int type){
-		/*
-		 * TODO: 				If moveRight is true and if the fish hasn't reached the right boundary yet,
-		 *    						move the fish to the right by changing the x position of the fish depending on its speed
-		 *    					else if it has reached the boundary, change the moveRight value / move to the left
-		 * 					 Else, if moveRight is false and if the fish hasn't reached the left boundary yet,
-		 * 	 						move the fish to the left by changing the x position of the fish depending on its speed.
-		 * 						else if it has reached the boundary, change the moveRight value / move to the right
-		 */
-//		if (this.moveRight && this.x < GameStage.WINDOW_WIDTH-FISH_WIDTH) {
-//			this.x += this.speed;
-//		} else if (this.x >= GameStage.WINDOW_WIDTH-FISH_WIDTH) {
-//			this.moveRight = !this.moveRight;
-//		}
-//
-//		if (this.moveRight == false && this.x > 0) {
-//			this.x -= this.speed;
-//		} else if (this.x <= 0) {
-//			this.moveRight = !this.moveRight;
-//		}
 		if(type == 0) this.x -= this.speed;  //virus fish: random speed
 		else this.x -= type;				//obstacle fish: speed of the ship
 		// if fish reaches the left bound
