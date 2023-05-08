@@ -67,17 +67,15 @@ public class GameMenu {
 	private void createHelpSubScene() {
 		this.helpSubScene = new GameMenuSubScene();
 		PanelText text = new PanelText(
-				"Different viruses roam the streets.\n"
-				+ "Help Peter fight the viruses!\n"
+				"ESCAPE FROM THE OUTBREAK!\n"
+				+ "Avoid the viruses, run, and win the race!\n"
 
-				+ "\nKill the virus boss and stay alive for a minute to win!\n"
-
-				+ "\nFace mask increases your health "
-				+ "while vaccine grants you immunity.\n"
+				+ "\nFace mask grants you immunity, \n"
+				+ "energy drink helps increase your speed, \n"
+				+ "and vaccine boost your health.\n"
 
 				+ "\nCONTROLS:\n"
 				+ "* Press ARROW KEYS to move.\n"
-				+ "* Press SPACEBAR to shoot."
 				);
 		this.menuRoot.getChildren().add(helpSubScene);
 		this.helpSubScene.getRootOfSubScene().getChildren().add(text);
@@ -86,11 +84,13 @@ public class GameMenu {
 		this.aboutSubScene = new GameMenuSubScene();
 		this.menuRoot.getChildren().add(aboutSubScene);
 		PanelText text = new PanelText(
-				"Different viruses roam the streets.\n"
-				+ "Help Peter fight the viruses!\n"
+				"ESCAPE FROM THE OUTBREAK!\n"
+				+ "Avoid the viruses, run, and win the race!\n"
 
 				+ "\nDeveloper:\n"
 				+ "* Mark Lewis S. Damalerio\n"
+				+ "* Jramae Gallos\n"
+				+ "* Leilanie F. Evora\n"
 
 				+ "\nReferences:\n"
 				+ "* CMSC 22 Mini Project Template by UPLB ICS CMSC 22 Professors\n"
