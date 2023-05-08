@@ -45,7 +45,6 @@ public class GameTimer extends AnimationTimer{
 	private int init_ctr;
 
 	private ArrayList<GameTimeSeconds> timers;
-	private static int timerIndex = 0;
 	private ArrayList<Fish> fishes;
 	private ArrayList<GameBuff> buffs;
 	public static final int INITIAL_FISH = 7;
@@ -69,7 +68,6 @@ public class GameTimer extends AnimationTimer{
 		this.startSpawn = System.nanoTime();	//get current nanotime
 		this.startMove = System.nanoTime();
 		this.startSpawnBuff = System.nanoTime();	//get current nanotime
-		//this.startImmortal = System.nanoTime();
 		this.myShip = new Ship("Peter",100,100);
 		this.init_ctr= 1;
 
@@ -86,7 +84,6 @@ public class GameTimer extends AnimationTimer{
 
 		this.lines= new ArrayList<RoadLines>();
 		this.initLines= new ArrayList<RoadLines>();
-		// this.initTimer();
 	}
 
 	// HANDLE METHOD
@@ -119,10 +116,10 @@ public class GameTimer extends AnimationTimer{
 		}
 		this.backgroundAnimation(currentSec, startMove, currentNanoTime);
 
-		// every 5 seconds, spawn fish
-		this.spawnFishesEvery3Sec(currentSec, startSec, currentNanoTime);
-
-		// spawn buff every 10 seconds
+		/*
+		 * Call the spawn methods
+		 */
+		this.spawnFishesEverySec(currentSec, startSec, currentNanoTime);
 		this.spawnBuffsEvery8(currentSec, startSpawnSecBuff, currentNanoTime);
 		this.removeBuffsEvery5(currentSec, startSpawnSecBuff);
 		this.collideBuff();
@@ -145,26 +142,22 @@ public class GameTimer extends AnimationTimer{
 
 		this.moveLines();
 		this.renderLines();
-
 		this.moveinitLines();
 		this.renderinitLines();
 
-		this.myShip.move();
 		/*
-		 * Call the moveBullets and moveFishes methods
+		 * Call the move methods
 		 */
-		// this.moveBullets();
+		this.myShip.move();
 		this.moveFishes();
 		this.moveBuff();
 		this.myShip.render(this.gc);  //render the ship
 
 		/*
-		 * Call the renderFishes and renderBullets methods
+		 * Call the render methods
 		 */
 		this.renderFishes();
-		// this.renderBullets();
 		this.renderBuffs();
-		// this.bulletHitsFish();  // MARK: check bullet-fish collision
 		this.fishHitsShip();  // MARK: check fish-ship collision
 
 		this.textRender(this.gc, gameTimeSec);
@@ -250,9 +243,10 @@ public class GameTimer extends AnimationTimer{
 			this.fishes.add(fish);
 		}
 	}
-	private void spawnFishesEvery3Sec(long currentSec, long startSec, long currentNanoTime) {
+	private void spawnFishesEverySec(long currentSec, long startSec, long currentNanoTime) {
 		if((currentSec - startSec) > 1){
-			this.spawnFishes(1);
+			// Ley: Number of obstacle spawned is based on the speed of the player
+			this.spawnFishes(this.myShip.getSpeed());
 			this.startSpawn = currentNanoTime;
 		}
 	}
@@ -269,7 +263,6 @@ public class GameTimer extends AnimationTimer{
 		}
 	}
 
-
 	// BUFF METHODS
 	private void renderBuffs() {
 		for (GameBuff b : this.buffs){
@@ -278,29 +271,27 @@ public class GameTimer extends AnimationTimer{
 	}
 	private void spawnBuffs() {
 		Random pos = new Random();
-		GameBuff buff = new GameBuff((GameStage.WINDOW_WIDTH - 200), pos.nextInt(5)*80 + 80, this.myShip);
+		GameBuff buff = new GameBuff((GameStage.WINDOW_WIDTH/2), pos.nextInt(5)*80 + 80, this.myShip);
 		this.buffs.add(buff);
 	}
 	private void spawnBuffsEvery8(long currentSec, long startSpawnSecBuff, long currentNanoTime) {
-		if ((currentSec - startSpawnSecBuff) > 5) {
+		if ((currentSec - startSpawnSecBuff) > 8) {
 			spawnBuffs();
 			this.startSpawnBuff = currentNanoTime;
 		}
 	}
-
 	private void moveBuff(){
 		for(int i = 0; i < this.buffs.size(); i++){
 			GameBuff b = this.buffs.get(i);
 			if (b.isAlive()) {
-				b.move(this.myShip.getSpeed());  //obstacle fish - speed is in sync with the background speed
+				b.move(this.myShip.getSpeed());
 			} else {
 				this.buffs.remove(b);
 			}
 		}
 	}
-
 	private void removeBuffsEvery5(long currentSec, long startSpawnSecBuff) {
-		if (currentSec - startSpawnSecBuff == 10) {
+		if (currentSec - startSpawnSecBuff == 5) {
 			for (int i=0; i<this.buffs.size(); i++) {
 				if(this.buffs.get(i).getType()==0){
 					this.hasMask = false;
@@ -332,13 +323,10 @@ public class GameTimer extends AnimationTimer{
 		try {
 			for (int i=0; i<this.fishes.size(); i++) {
 				if (this.myShip.collidesWith(this.fishes.get(i))) {
-
 					// NOTE: Move the implementation of immortal in Ship.gotHit() method
 					// if (!this.myShip.getImmortal()) {
 					this.myShip.gotHit(this.fishes.get(i));
 					// }
-
-
 					this.fishes.get(i).setAlive(false);
 				}
 			}
@@ -367,15 +355,12 @@ public class GameTimer extends AnimationTimer{
 
 		this.theScene.setOnKeyReleased(new EventHandler<KeyEvent>(){
             public void handle(KeyEvent e){
-            	// ship is always walking for CMSC 137
             	if (hasMask) {
             		myShip.loadImage(Ship.MASK_IMAGE_WALK);
             	} else {
             		myShip.loadImage(Ship.SHIP_IMAGE_WALK);
             	}
-
             	KeyCode code = e.getCode();
-
                 stopMyShip(code);
             }
 		});
@@ -384,9 +369,9 @@ public class GameTimer extends AnimationTimer{
 	// move the ship depending on the key pressed
 	private void moveMyShip(KeyCode ke) {
 		if(ke==KeyCode.UP) this.myShip.setDY(-3);
-		if(ke==KeyCode.LEFT) this.myShip.setDX(-3);
 		if(ke==KeyCode.DOWN) this.myShip.setDY(3);
- 		if(ke==KeyCode.RIGHT) this.myShip.setDX(3);
+ 		//if(ke==KeyCode.RIGHT) this.myShip.setDX(3);
+		//if(ke==KeyCode.LEFT) this.myShip.setDX(-3);
    	}
 
 	// stop the ship's movement; set the ship's DX and DY to 0
@@ -420,7 +405,6 @@ public class GameTimer extends AnimationTimer{
 	*/
 
 	// UI IN CLASS
-
 	// initialize the text status in gc
 	private void initStatus() {
 		this.gc.setFill(Color.CHARTREUSE);
@@ -441,11 +425,6 @@ public class GameTimer extends AnimationTimer{
         	this.gc.fillText("IMMUNE!", this.myShip.getX()-10, this.myShip.getY());
         }
     }
-
-//	private void textRenderImmortal(GraphicsContext gc, int seconds) {
-//		int secondsPassed = seconds+1;
-//		this.gc.fillText("VACCINATED! " + secondsPassed, this.myShip.getX()+60, this.myShip.getY());
-//	}
 
 	// GETTER
 	public ArrayList<GameTimeSeconds> getTimers() {

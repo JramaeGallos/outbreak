@@ -46,28 +46,24 @@ public class Sprite {
 		return rectangle1.intersects(rectangle2);
 	}
 
+	// getters
 	// method that will return the bounds of an image
 	private Rectangle2D getBounds(){
 		return new Rectangle2D(this.x, this.y, this.width, this.height);
 	}
-
 	// method to return the image
 	Image getImage(){
 		return this.img;
 	}
-	// getters
 	public int getX() {
     	return this.x;
 	}
-
 	public int getY() {
     	return this.y;
 	}
-
 	public boolean getVisible(){
 		return visible;
 	}
-
 	public boolean isVisible(){
 		if(visible) return true;
 		return false;
@@ -77,21 +73,16 @@ public class Sprite {
 	public void setDX(int dx){
 		this.dx = dx;
 	}
-
 	public void setDY(int dy){
 		this.dy = dy;
 	}
-
 	public void setWidth(double val){
 		this.width = val;
 	}
-
 	public void setHeight(double val){
 		this.height = val;
 	}
-
 	public void setVisible(boolean value){
 		this.visible = value;
 	}
-
 }

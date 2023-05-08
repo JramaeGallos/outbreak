@@ -1,6 +1,5 @@
 package game;
 
-import java.util.ArrayList;
 import javafx.scene.image.Image;
 import stage.GameStage;
 
@@ -16,14 +15,13 @@ public class Ship extends Sprite{
 	private boolean immortal;
 	private boolean won;
 
-	private ArrayList<Bullet> bullets;
 	public final static Image SHIP_IMAGE_STAND = new Image("images/doctor_stand.png",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 	public final static Image SHIP_IMAGE_WALK = new Image("images/doctor_walk.gif",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 	public final static Image MASK_IMAGE_STAND = new Image("images/doctor_mask_stand.png",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 	public final static Image MASK_IMAGE_WALK = new Image("images/doctor_mask_walk.gif",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 
-	private final static int SHIP_HEIGHT = 90; // scaled down from 525
-	private final static int SHIP_WIDTH = 70; // scaled down from 300
+	private final static int SHIP_HEIGHT = 90;
+	private final static int SHIP_WIDTH = 70;
 
 	// CONSTRUCTOR
 	public Ship(String name, int x, int y){
@@ -35,8 +33,6 @@ public class Ship extends Sprite{
 		this.health = 100;
 		this.distance = 0;
 		this.won = false;
-
-		// this.loadImage(Ship.SHIP_IMAGE_STAND);
 		this.loadImage(SHIP_IMAGE_WALK);  // ship walks initially
 	}
 
@@ -73,7 +69,6 @@ public class Ship extends Sprite{
 
 		// if virus
 		} else{
-
 			// check first if immortal
 			if (!this.getImmortal()) {
 				this.health -= 10;
@@ -91,11 +86,11 @@ public class Ship extends Sprite{
 	// SETTERS
 	public void setSpeed(int type) {
 		if (type == 0){ // To increase
-			this.speed = this.speed * 2;
+			this.speed = this.speed + 1;
 		} else { //To decrease
 			// If speed is 1, then will not change
 			if (this.speed >= 2){
-				this.speed = (int) (this.speed / 2);
+				this.speed = this.speed - 1;
 			}
 		}
 	}
@@ -110,13 +105,12 @@ public class Ship extends Sprite{
 		this.health += 20;
 	}
 	public void setDistance(long time){
-		if ((int) (this.speed * time) > this.distance){
-			this.distance = (int) (this.speed * time);
-		}
+		this.distance = (int) (this.speed * time);
 	}
 	public void setWin(){
 		this.won = true;
 	}
+
 	//method called if up/down/left/right arrow key is pressed.
 	public void move() {
 		/*
