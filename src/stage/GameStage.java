@@ -15,6 +15,7 @@ public class GameStage {
 
 	public static final int WINDOW_HEIGHT = 500;
 	public static final int WINDOW_WIDTH = 800;
+	public static final int WINDOW_EXTENDED_WIDTH = 1000;
 	private Scene scene;
 	public static Stage stage;
 
@@ -30,8 +31,8 @@ public class GameStage {
 	//the class constructor
 	public GameStage() {
 		this.root = new Group();
-		this.scene = new Scene(this.root, GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT,Color.CADETBLUE);
-		this.canvas = new Canvas(GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT);
+		this.scene = new Scene(this.root, GameStage.WINDOW_EXTENDED_WIDTH,GameStage.WINDOW_HEIGHT,Color.CADETBLUE);
+		this.canvas = new Canvas(GameStage.WINDOW_EXTENDED_WIDTH,GameStage.WINDOW_HEIGHT);
 		this.gc = canvas.getGraphicsContext2D();
 		this.view = new ImageView();
 		this.gameBackground = new Image(GameStage.GAME_BACKGROUND_PATH, GameStage.WINDOW_WIDTH, GameStage.WINDOW_HEIGHT, false, false);

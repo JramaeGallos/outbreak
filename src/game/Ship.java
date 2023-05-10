@@ -104,8 +104,8 @@ public class Ship extends Sprite{
 	public void setHealth(){
 		this.health += 20;
 	}
-	public void setDistance(long time){
-		this.distance = (int) (this.speed * time);
+	public void setDistance(){
+		this.distance += this.speed;
 	}
 	public void setWin(){
 		this.won = true;

@@ -35,12 +35,13 @@ public class GameTimer extends AnimationTimer{
 	private final int timeTextX = 300;
 	private final int healthTextX = 570;
 	private final int textY = 40;
-	private final int maxDistance = 500;
+	private final int maxDistance = 100;
 
 	private long timeReference;
 	private long startSpawn;
 	private long startMove;
 	private long startSpawnBuff;
+	private long startDistance;
 	private boolean hasMask;
 	private int init_ctr;
 
@@ -52,14 +53,11 @@ public class GameTimer extends AnimationTimer{
 	public static final int winGameTime = 60; // in seconds
 	public static final int bossFightSec = 30; // in seconds
 	public static final int MAX_IMMO_TIMER = 5;
-	public static boolean bossSpawned = false;
-	public static boolean bossDead = false;
-	public static boolean ImmoTimerStarted = false;
-	public static int fishKilled = 0;
 
 
 	private ArrayList<RoadLines> lines;
 	private ArrayList<RoadLines> initLines;
+
 	// CONSTRUCTOR
 	public GameTimer(GraphicsContext gc, Scene theScene){
 		this.gc = gc;
@@ -67,6 +65,7 @@ public class GameTimer extends AnimationTimer{
 		this.timeReference = System.nanoTime();
 		this.startSpawn = System.nanoTime();	//get current nanotime
 		this.startMove = System.nanoTime();
+		this.startDistance = System.nanoTime(); // distance
 		this.startSpawnBuff = System.nanoTime();	//get current nanotime
 		this.myShip = new Ship("Peter",100,100);
 		this.init_ctr= 1;
@@ -91,7 +90,7 @@ public class GameTimer extends AnimationTimer{
 	public void handle(long currentNanoTime) {
 
 		// MARK: clear canvas
-		this.gc.clearRect(0, 0, GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT);
+		this.gc.clearRect(0, 0, GameStage.WINDOW_EXTENDED_WIDTH,GameStage.WINDOW_HEIGHT);
 		System.out.println(this.myShip.getSpeed());
 
 		// MARK: stores game time in seconds
@@ -102,6 +101,8 @@ public class GameTimer extends AnimationTimer{
 		long startSec = TimeUnit.NANOSECONDS.toSeconds(this.startSpawn);
 		long startMove = TimeUnit.NANOSECONDS.toSeconds(this.startMove);
 		long startSpawnSecBuff = TimeUnit.NANOSECONDS.toSeconds(this.startSpawnBuff);
+		long startSecDistance = TimeUnit.NANOSECONDS.toSeconds(this.startDistance);
+
 
 		// will be used as time (in seconds)
 		long gameTimeSec = (currentSec - appStartSec);
@@ -120,6 +121,7 @@ public class GameTimer extends AnimationTimer{
 		 * Call the spawn methods
 		 */
 		this.spawnFishesEverySec(currentSec, startSec, currentNanoTime);
+		this.shipSetDistance(currentSec, startSecDistance, currentNanoTime);
 		this.spawnBuffsEvery8(currentSec, startSpawnSecBuff, currentNanoTime);
 		this.removeBuffsEvery5(currentSec, startSpawnSecBuff);
 		this.collideBuff();
@@ -160,8 +162,10 @@ public class GameTimer extends AnimationTimer{
 		this.renderBuffs();
 		this.fishHitsShip();  // MARK: check fish-ship collision
 
+
 		this.textRender(this.gc, gameTimeSec);
 	}
+
 
 	//Road Lines Animation
 	private void initLines(int howMany){
@@ -394,6 +398,16 @@ public class GameTimer extends AnimationTimer{
 		}
 	}
 
+	// frame distance method (adjust distance every second depending on speed)
+	private void shipSetDistance(long currentSec, long startSec, long currentNanoTime) {
+		if ((currentSec - startSec) > 1) {
+			this.myShip.setDistance();
+			this.startDistance = currentNanoTime;
+
+		}
+
+	}
+
 	/*
 	// initialize timer for immortality
 	private void initTimer() {
@@ -418,7 +432,6 @@ public class GameTimer extends AnimationTimer{
 	// render text (speed, distance, health)
 	private void textRender(GraphicsContext gc, long currentSec) {
         this.gc.fillText("Speed: " + this.myShip.getSpeed(), this.hpTextX, this.textY);
-        this.myShip.setDistance(currentSec);
         this.gc.fillText("Distance: " + this.myShip.getDistance(), this.timeTextX, this.textY);
         this.gc.fillText("Health: " + this.myShip.getHealth(), this.healthTextX, this.textY);
         if (this.myShip.getImmortal()) {
