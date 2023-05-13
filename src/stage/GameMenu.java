@@ -5,11 +5,15 @@ import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 // menu class for game menu
@@ -26,13 +30,15 @@ public class GameMenu {
 	public final static ImageView title = new ImageView("stage/resources/title.png");
 
 	// for organizing menu buttons
-	private final static int MENU_BUTTONS_START_X = 50;
-	private final static int MENU_BUTTONS_START_Y = 80;
+	public final static int MENU_BUTTONS_START_X = 50;
+	public final static int MENU_BUTTONS_START_Y = 80;
 	private ArrayList<GameButton> menuButtons;
 
 	private GameMenuSubScene helpSubScene;
 	private GameMenuSubScene aboutSubScene;
 	private GameMenuSubScene shownSubScene;  // to help with opening subscenes one at a time
+
+	private String userName;
 
 	// CONSTRUCTOR
 	public GameMenu() {
@@ -43,6 +49,8 @@ public class GameMenu {
 		this.menuBackground = new Image(MENU_BACKGROUND_PATH);
 		this.menuButtons = new ArrayList<GameButton>();
 		this.view = new ImageView();
+
+		this.userName="";
 	}
 
 	// setting the stage
@@ -61,6 +69,10 @@ public class GameMenu {
 		this.menuStage.setResizable(false);
 		this.menuStage.setScene(this.menuScene);
 		this.menuStage.show();
+	}
+
+	void setUserName(String user){
+		this.userName=user;
 	}
 
 	// create the subscene and its content
@@ -129,6 +141,12 @@ public class GameMenu {
 		GameMenu.title.setLayoutY(30);
 		GameMenu.title.setEffect(new DropShadow());
 		this.menuRoot.getChildren().add(GameMenu.title);
+
+		String userGreetings="Hello. "+this.userName;
+		Label l = new Label(userGreetings);
+		l.setLayoutX(300);
+		l.setLayoutY(100);
+		this.menuRoot.getChildren().add(l);
 	}
 
 	// adding menu buttons to the root (in a vertical layout)
@@ -157,6 +175,7 @@ public class GameMenu {
 			@Override
 			public void handle(MouseEvent e) {
 				GameStage playGame = new GameStage();
+				playGame.setUserName(userName);
 				playGame.setStage(menuStage);
 			}
 		});

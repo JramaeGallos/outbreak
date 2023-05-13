@@ -5,20 +5,34 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import stage.GameMenu;
+import stage.ServerPage;
+import stage.StartPage;
 
 // main class
 public class Main extends Application {
+	private boolean isServer= false;
+//	private boolean isServer= true;
 
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 	public void start(Stage stage){
-		// launch main menu
-		GameMenu menu = new GameMenu();
-		menu.setStage(stage);
-		closeWindowListener(stage);  // listener for closing window
+		if (isServer){
+			this.createServer(stage);
+		}else{
+			this.createClient(stage);
+		}
+	}
+
+	private void createServer(Stage stage){
+		 new ServerPage().startServer();
+	}
+
+	private void createClient(Stage stage){
+		StartPage start= new StartPage();
+		start.setStage(stage);
+		closeWindowListener(stage);
 	}
 
 	private void closeWindowListener(Stage stage) {
