@@ -26,7 +26,7 @@ public class GameStage {
 
 	public static final int WINDOW_HEIGHT = 500;
 	public static final int WINDOW_WIDTH = 800;
-	public static final int WINDOW_EXTENDED_WIDTH = 1000;
+	public static final int WINDOW_EXTENDED_WIDTH = 1050;
 	private Scene scene;
 	public static Stage stage;
 
@@ -54,8 +54,8 @@ public class GameStage {
 	//the class constructor
 	public GameStage() {
 		this.root = new Group();
-		this.scene = new Scene(this.root, GameStage.WINDOW_EXTENDED_WIDTH,GameStage.WINDOW_HEIGHT,Color.CADETBLUE);
-		this.canvas = new Canvas(GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT);
+		this.scene = new Scene(this.root, GameStage.WINDOW_EXTENDED_WIDTH,GameStage.WINDOW_HEIGHT,Color.GRAY);
+		this.canvas = new Canvas(GameStage.WINDOW_EXTENDED_WIDTH,GameStage.WINDOW_HEIGHT);
 		this.gc = canvas.getGraphicsContext2D();
 
 		this.gameBackground = new Image(GameStage.GAME_BACKGROUND_PATH, GameStage.WINDOW_WIDTH, GameStage.WINDOW_HEIGHT, false, false);
@@ -87,22 +87,22 @@ public class GameStage {
 
 	private void createTextField(){
 		this.chat.setAlignment(Pos.CENTER);
-		this.chat.setLayoutX(830);
+		this.chat.setLayoutX(850);
 		this.chat.setLayoutY(450);
 		this.chat.setPromptText("Reply ");
 		this.root.getChildren().add(this.chat);
 	}
 
 	private void createConvo(){
-		this.messages.setPrefHeight(300);
+		this.messages.setPrefHeight(230);
 		this.messages.setLayoutX(800);
-		this.messages.setLayoutY(50);
+		this.messages.setLayoutY(200);
 		this.root.getChildren().add(this.messages);
 	}
 	private void handleChat(){
 		this.chat.setOnAction(event ->{
-    		this.message= this.userName+ ": ";
-    		this.message+= this.chat.getText();
+    		this.message = this.userName+ ": ";
+    		this.message += this.chat.getText();
     		this.chat.clear();
     		writer.println(message);
     		this.message="";
@@ -115,13 +115,11 @@ public class GameStage {
             reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             writer = new PrintWriter(sock.getOutputStream(), true);
 
-
             // create a new thread to listen for incoming messages from the server
             Thread incomingThread = new Thread(new IncomingReader());
             incomingThread.start();
 
             this.handleChat();
-
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -145,9 +143,7 @@ public class GameStage {
     }
 
     void setUserName(String user){
-		this.userName=user;
+		this.userName =user;
 	}
-
-
 }
 

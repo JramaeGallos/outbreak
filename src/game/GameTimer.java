@@ -12,6 +12,7 @@ import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -36,6 +37,7 @@ public class GameTimer extends AnimationTimer{
 	private final int healthTextX = 570;
 	private final int textY = 40;
 	private final int maxDistance = 100;
+	private final int maxPlayer = 3;
 
 	private long timeReference;
 	private long startSpawn;
@@ -44,6 +46,8 @@ public class GameTimer extends AnimationTimer{
 	private long startDistance;
 	private boolean hasMask;
 	private int init_ctr;
+	private Image gameBackground;
+	private final static String GAME_BACKGROUND_PATH = "stage/resources/gray_background.jpg";
 
 	private ArrayList<GameTimeSeconds> timers;
 	private ArrayList<Fish> fishes;
@@ -69,6 +73,7 @@ public class GameTimer extends AnimationTimer{
 		this.startSpawnBuff = System.nanoTime();	//get current nanotime
 		this.myShip = new Ship("Peter",100,100);
 		this.init_ctr= 1;
+		this.gameBackground = new Image(GameTimer.GAME_BACKGROUND_PATH, 200, GameStage.WINDOW_HEIGHT, false, false);
 
 		//instantiate the ArrayList of Fish
 		this.fishes = new ArrayList<Fish>();
@@ -126,22 +131,6 @@ public class GameTimer extends AnimationTimer{
 		this.removeBuffsEvery5(currentSec, startSpawnSecBuff);
 		this.collideBuff();
 
-//		if (this.myShip.getImmortal() == true) {
-//			// one-time starting of immortal timer
-//			if (!GameTimer.ImmoTimerStarted) {
-//				GameTimeSeconds time = this.timers.get(timerIndex);
-//				timerIndex += 1;
-//				time.start();
-//				GameTimer.ImmoTimerStarted = true;
-//			}
-//			this.textRenderImmortal(this.gc, GameTimeSeconds.secondsPassed);
-//			// if timer reaches 3 seconds
-//			if (GameTimeSeconds.secondsPassed == 3) {
-//				this.myShip.setImmortal(false);
-//				GameTimer.ImmoTimerStarted = false;
-//			}
-//		}
-
 		this.moveLines();
 		this.renderLines();
 		this.moveinitLines();
@@ -162,8 +151,9 @@ public class GameTimer extends AnimationTimer{
 		this.renderBuffs();
 		this.fishHitsShip();  // MARK: check fish-ship collision
 
-
 		this.textRender(this.gc, gameTimeSec);
+		this.gc.drawImage(this.gameBackground, 800, 0, 250, 500);;
+		this.rankRender(this.gc);
 	}
 
 
@@ -403,20 +393,8 @@ public class GameTimer extends AnimationTimer{
 		if ((currentSec - startSec) > 1) {
 			this.myShip.setDistance();
 			this.startDistance = currentNanoTime;
-
-		}
-
-	}
-
-	/*
-	// initialize timer for immortality
-	private void initTimer() {
-		for (int i=0; i<MAX_IMMO_TIMER; i++) {
-			GameTimeSeconds timer = new GameTimeSeconds();
-			this.timers.add(timer);
 		}
 	}
-	*/
 
 	// UI IN CLASS
 	// initialize the text status in gc
@@ -438,6 +416,14 @@ public class GameTimer extends AnimationTimer{
         	this.gc.fillText("IMMUNE!", this.myShip.getX()-10, this.myShip.getY());
         }
     }
+
+	//render in-game rankings
+	private void rankRender(GraphicsContext gc){
+		this.gc.fillText("RANKINGS", 870, 50);
+		for (int i = 0; i < this.maxPlayer; i++){
+			this.gc.fillText((i+1) + "\t" + this.myShip.getName() + "\t " + this.myShip.getDistance(), 830, 100 + (i * 30));
+		}
+	}
 
 	// GETTER
 	public ArrayList<GameTimeSeconds> getTimers() {

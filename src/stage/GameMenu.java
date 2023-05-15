@@ -50,7 +50,7 @@ public class GameMenu {
 		this.menuButtons = new ArrayList<GameButton>();
 		this.view = new ImageView();
 
-		this.userName="";
+		this.userName = "";
 	}
 
 	// setting the stage
@@ -72,7 +72,7 @@ public class GameMenu {
 	}
 
 	void setUserName(String user){
-		this.userName=user;
+		this.userName = user;
 	}
 
 	// create the subscene and its content
@@ -142,10 +142,10 @@ public class GameMenu {
 		GameMenu.title.setEffect(new DropShadow());
 		this.menuRoot.getChildren().add(GameMenu.title);
 
-		String userGreetings="Hello. "+this.userName;
+		String userGreetings = "Hello " + this.userName;
 		Label l = new Label(userGreetings);
 		l.setLayoutX(300);
-		l.setLayoutY(100);
+		l.setLayoutY(200);
 		this.menuRoot.getChildren().add(l);
 	}
 

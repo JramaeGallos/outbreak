@@ -61,11 +61,11 @@ public class Ship extends Sprite{
 		// if obstacle
 		if (virus.getType() == 6 || virus.getType() == 7 || virus.getType() == 8) {
 			this.setSpeed(1);
-			System.out.println("OBSTACLE!");
-			System.out.println("OBSTACLE!");
-			System.out.println("OBSTACLE!");
-			System.out.println("OBSTACLE!");
-			System.out.println("OBSTACLE!");
+//			System.out.println("OBSTACLE!");
+//			System.out.println("OBSTACLE!");
+//			System.out.println("OBSTACLE!");
+//			System.out.println("OBSTACLE!");
+//			System.out.println("OBSTACLE!");
 
 		// if virus
 		} else{
