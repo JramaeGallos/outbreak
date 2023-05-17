@@ -15,25 +15,22 @@ public class Ship extends Sprite{
 	private boolean immortal;
 	private boolean won;
 
-	public final static Image SHIP_IMAGE_STAND = new Image("images/doctor_stand.png",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 	public final static Image SHIP_IMAGE_WALK = new Image("images/doctor_walk.gif",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
-	public final static Image MASK_IMAGE_STAND = new Image("images/doctor_mask_stand.png",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 	public final static Image MASK_IMAGE_WALK = new Image("images/doctor_mask_walk.gif",Ship.SHIP_WIDTH,Ship.SHIP_HEIGHT,false,false);
 
 	private final static int SHIP_HEIGHT = 90;
 	private final static int SHIP_WIDTH = 70;
 
 	// CONSTRUCTOR
-	public Ship(String name, int x, int y){
+	public Ship(int x, int y){
 		super(x,y);
-		this.name = name;
 		this.immortal = false;
 		this.speed = this.initialSpeed;
 		this.alive = true;
 		this.health = 100;
 		this.distance = 0;
 		this.won = false;
-		this.loadImage(SHIP_IMAGE_WALK);  // ship walks initially
+		this.loadImage(SHIP_IMAGE_WALK);
 	}
 
 	// GETTERS
@@ -61,11 +58,6 @@ public class Ship extends Sprite{
 		// if obstacle
 		if (virus.getType() == 6 || virus.getType() == 7 || virus.getType() == 8) {
 			this.setSpeed(1);
-//			System.out.println("OBSTACLE!");
-//			System.out.println("OBSTACLE!");
-//			System.out.println("OBSTACLE!");
-//			System.out.println("OBSTACLE!");
-//			System.out.println("OBSTACLE!");
 
 		// if virus
 		} else{
@@ -109,6 +101,9 @@ public class Ship extends Sprite{
 	}
 	public void setWin(){
 		this.won = true;
+	}
+	public void setName(String name){
+		this.name = name;
 	}
 
 	//method called if up/down/left/right arrow key is pressed.

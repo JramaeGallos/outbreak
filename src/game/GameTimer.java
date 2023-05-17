@@ -11,6 +11,7 @@ import background_elements.RoadLines;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -28,6 +29,8 @@ import stage.PanelText;
 public class GameTimer extends AnimationTimer{
 
 	private GraphicsContext gc;
+	private GraphicsContext gc1;
+	private Canvas canvas1;
 	private Scene theScene;
 	private Ship myShip;
 
@@ -46,7 +49,9 @@ public class GameTimer extends AnimationTimer{
 	private long startDistance;
 	private boolean hasMask;
 	private int init_ctr;
+	private String userName;
 	private Image gameBackground;
+	private GameStage stage;
 	private final static String GAME_BACKGROUND_PATH = "stage/resources/gray_background.jpg";
 
 	private ArrayList<GameTimeSeconds> timers;
@@ -58,21 +63,23 @@ public class GameTimer extends AnimationTimer{
 	public static final int bossFightSec = 30; // in seconds
 	public static final int MAX_IMMO_TIMER = 5;
 
-
 	private ArrayList<RoadLines> lines;
 	private ArrayList<RoadLines> initLines;
 
 	// CONSTRUCTOR
-	public GameTimer(GraphicsContext gc, Scene theScene){
+	public GameTimer(GraphicsContext gc, GraphicsContext gc1, Canvas canvas1, Scene theScene, GameStage stage){
 		this.gc = gc;
+		this.gc1 = gc1;
+		this.canvas1 = canvas1;
 		this.theScene = theScene;
 		this.timeReference = System.nanoTime();
 		this.startSpawn = System.nanoTime();	//get current nanotime
 		this.startMove = System.nanoTime();
 		this.startDistance = System.nanoTime(); // distance
 		this.startSpawnBuff = System.nanoTime();	//get current nanotime
-		this.myShip = new Ship("Peter",100,100);
+		this.myShip = new Ship(100,100);
 		this.init_ctr= 1;
+		this.stage = stage;
 		this.gameBackground = new Image(GameTimer.GAME_BACKGROUND_PATH, 200, GameStage.WINDOW_HEIGHT, false, false);
 
 		//instantiate the ArrayList of Fish
@@ -95,8 +102,8 @@ public class GameTimer extends AnimationTimer{
 	public void handle(long currentNanoTime) {
 
 		// MARK: clear canvas
-		this.gc.clearRect(0, 0, GameStage.WINDOW_EXTENDED_WIDTH,GameStage.WINDOW_HEIGHT);
-		System.out.println(this.myShip.getSpeed());
+		this.gc.clearRect(0, 0, GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT);
+		this.gc1.clearRect(0, 0, GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT);
 
 		// MARK: stores game time in seconds
 		long currentSec = TimeUnit.NANOSECONDS.toSeconds(currentNanoTime);
@@ -152,10 +159,12 @@ public class GameTimer extends AnimationTimer{
 		this.fishHitsShip();  // MARK: check fish-ship collision
 
 		this.textRender(this.gc, gameTimeSec);
-		this.gc.drawImage(this.gameBackground, 800, 0, 250, 500);;
+		this.gc.drawImage(this.gameBackground, 800, 0, 250, 500);
+		this.gc1.setStroke(Color.BLACK); // Set the stroke color
+        this.gc1.setLineWidth(1); // Set the stroke width
+        this.gc1.strokeRect(0, 0, GameStage.WINDOW_WIDTH, GameStage.WINDOW_HEIGHT);
 		this.rankRender(this.gc);
 	}
-
 
 	//Road Lines Animation
 	private void initLines(int howMany){
@@ -329,34 +338,43 @@ public class GameTimer extends AnimationTimer{
 
 	// listen and handle the key press events
 	private void handleKeyPressEvent() {
-		this.theScene.setOnKeyPressed(new EventHandler<KeyEvent>(){
-			public void handle(KeyEvent e){
-            	KeyCode code = e.getCode();
-            	if(code == KeyCode.UP ||
-            	   code == KeyCode.LEFT ||
-            	   code == KeyCode.DOWN ||
-            	   code == KeyCode.RIGHT)
-            	   {
-            		if (hasMask) {
-            			myShip.loadImage(Ship.MASK_IMAGE_WALK);
-            		} else {
-            			myShip.loadImage(Ship.SHIP_IMAGE_WALK);
-            		}
-            	}
-                moveMyShip(code);
-			}
-		});
+		this.canvas1.setOnMouseEntered(event -> {
+			this.theScene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+				public void handle(KeyEvent e){
+	            	KeyCode code = e.getCode();
+	            	if(code == KeyCode.UP ||
+	            	   code == KeyCode.LEFT ||
+	            	   code == KeyCode.DOWN ||
+	            	   code == KeyCode.RIGHT)
+	            	   {
+	            		if (hasMask) {
+	            			myShip.loadImage(Ship.MASK_IMAGE_WALK);
+	            		} else {
+	            			myShip.loadImage(Ship.SHIP_IMAGE_WALK);
+	            		}
+	            	}
+	                moveMyShip(code);
+				}
+			});
 
-		this.theScene.setOnKeyReleased(new EventHandler<KeyEvent>(){
-            public void handle(KeyEvent e){
-            	if (hasMask) {
-            		myShip.loadImage(Ship.MASK_IMAGE_WALK);
-            	} else {
-            		myShip.loadImage(Ship.SHIP_IMAGE_WALK);
-            	}
-            	KeyCode code = e.getCode();
-                stopMyShip(code);
-            }
+			this.theScene.setOnKeyReleased(new EventHandler<KeyEvent>(){
+	            public void handle(KeyEvent e){
+	            	if (hasMask) {
+	            		myShip.loadImage(Ship.MASK_IMAGE_WALK);
+	            	} else {
+	            		myShip.loadImage(Ship.SHIP_IMAGE_WALK);
+	            	}
+	            	KeyCode code = e.getCode();
+	                stopMyShip(code);
+	            }
+			});
+
+		});
+		this.canvas1.setOnMouseExited(event -> {
+			this.stage.enableTextField();
+		});
+		this.theScene.setOnMouseExited(event -> {
+			this.stage.enableTextField();
 		});
     }
 
@@ -421,13 +439,18 @@ public class GameTimer extends AnimationTimer{
 	private void rankRender(GraphicsContext gc){
 		this.gc.fillText("RANKINGS", 870, 50);
 		for (int i = 0; i < this.maxPlayer; i++){
-			this.gc.fillText((i+1) + "\t" + this.myShip.getName() + "\t " + this.myShip.getDistance(), 830, 100 + (i * 30));
+			this.gc.fillText((i+1) + "\t" + this.userName + "\t " + this.myShip.getDistance(), 830, 100 + (i * 30));
 		}
 	}
 
 	// GETTER
 	public ArrayList<GameTimeSeconds> getTimers() {
 		return this.timers;
+	}
+
+	public void setUserName(String user){
+		this.userName = user;
+		this.myShip.setName(user);
 	}
 }
 
