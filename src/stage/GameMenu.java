@@ -1,5 +1,8 @@
 package stage;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javafx.application.Platform;
@@ -12,8 +15,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 // menu class for game menu
@@ -31,7 +35,7 @@ public class GameMenu {
 
 	// for organizing menu buttons
 	public final static int MENU_BUTTONS_START_X = 50;
-	public final static int MENU_BUTTONS_START_Y = 80;
+	public final static int MENU_BUTTONS_START_Y = 150;
 	private ArrayList<GameButton> menuButtons;
 
 	private GameMenuSubScene helpSubScene;
@@ -61,6 +65,7 @@ public class GameMenu {
 		// MARK: set the buttons and title
 		this.createButtons();
 		this.createGameTitle();
+		this.systemGreetings();
 		this.createHelpSubScene();
 		this.createAboutSubScenes();
 
@@ -141,19 +146,38 @@ public class GameMenu {
 		GameMenu.title.setLayoutY(30);
 		GameMenu.title.setEffect(new DropShadow());
 		this.menuRoot.getChildren().add(GameMenu.title);
+	}
 
-		String userGreetings = "Hello " + this.userName;
+	private void systemGreetings(){
+		Rectangle rectangle = new Rectangle(20, 20, 250, 100);
+		rectangle.setFill(Color.WHITE);
+		rectangle.setArcWidth(100);
+        rectangle.setArcHeight(100);
+        Circle circle = new Circle(70, 70, 50);
+        circle.setFill(Color.RED);
+
+		Image profile = new Image("stage/resources/doctor_icon.png",80,80,false,false);
+		ImageView imageView = new ImageView(profile);
+		imageView.setLayoutX(30);
+		imageView.setLayoutY(30);
+
+		String userGreetings = "Username:\n" + this.userName;
 		Label l = new Label(userGreetings);
-		l.setLayoutX(300);
-		l.setLayoutY(200);
-		this.menuRoot.getChildren().add(l);
+		l.setLayoutX(130);
+		l.setLayoutY(50);
+		try {
+			l.setFont(Font.loadFont(new FileInputStream(new File(PanelText.FONT_PATH)), 18));
+		} catch (FileNotFoundException e) {
+			l.setFont(Font.font("Verdana", 18));
+		}
+		this.menuRoot.getChildren().addAll(rectangle, circle, imageView, l);
 	}
 
 	// adding menu buttons to the root (in a vertical layout)
 	private void addMenuButton(GameButton button) {
 		// MARK: set button position
 		button.setLayoutX(MENU_BUTTONS_START_X);
-		button.setLayoutY(MENU_BUTTONS_START_Y + menuButtons.size() * 100);
+		button.setLayoutY(MENU_BUTTONS_START_Y + menuButtons.size() * 90);
 		menuButtons.add(button);
 		this.menuRoot.getChildren().add(button);
 	}
@@ -214,6 +238,4 @@ public class GameMenu {
 			}
 		});
 	}
-
-
 }
