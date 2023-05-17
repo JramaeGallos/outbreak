@@ -368,7 +368,7 @@ public class GameTimer extends AnimationTimer{
 	                stopMyShip(code);
 	            }
 			});
-
+			this.stage.disableTextField();
 		});
 		this.canvas1.setOnMouseExited(event -> {
 			this.stage.enableTextField();

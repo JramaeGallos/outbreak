@@ -95,13 +95,17 @@ public class GameStage {
 		this.chat.setEditable(true);
 	}
 
+	public void disableTextField(){
+		chat.setDisable(true);
+		chat.setEditable(false);
+	}
+
 	private void mousePressEvent(){
 		this.chat.setOnMouseClicked( event -> {
-			chat.setEditable(true);
+			this.enableTextField();
         });
 		this.chat.setOnMouseExited( event -> {
-			chat.setDisable(true);
-			chat.setEditable(false);
+			this.disableTextField();
         });
 	}
 
