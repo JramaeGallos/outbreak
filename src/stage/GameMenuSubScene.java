@@ -14,7 +14,7 @@ import javafx.util.Duration;
 public class GameMenuSubScene extends SubScene {
 
 	//private final static String FONT_PATH = "src/stage/resources/kenvector_future.ttf";
-	private final static String PANEL_PATH = "stage/resources/yellow_panel.png";
+	public final static String PANEL_PATH = "stage/resources/yellow_panel.png";
 	public final static int WIDTH = 480;
 	public final static int HEIGHT = 300;
 	private final static int HIDDEN_X = 1000;
