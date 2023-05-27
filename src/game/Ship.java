@@ -25,6 +25,8 @@ public class Ship extends Sprite implements Serializable{
 	private final static int SHIP_HEIGHT = 90;
 	private final static int SHIP_WIDTH = 70;
 
+	private GameStage stage;
+
 	// CONSTRUCTOR
 	public Ship(int x, int y){
 		super(x,y);
@@ -102,6 +104,7 @@ public class Ship extends Sprite implements Serializable{
 	}
 	public void setDistance(){
 		this.distance += this.speed;
+//		stage.setWriter("distance= "+Integer.toString(this.distance));
 	}
 
 	public void setWin(){
@@ -133,4 +136,6 @@ public class Ship extends Sprite implements Serializable{
 			this.y += this.dy; // MARK: add the dy (vertical move value)
 		}
 	}
+
+
 }

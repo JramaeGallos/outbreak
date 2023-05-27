@@ -89,8 +89,7 @@ public class GameStage {
 		this.createTextField();
 		this.mousePressEvent();
 		this.createConvo();
-		this.startClient();
-		//invoke the start method of the animation timer
+		this.startClient();		//invoke the start method of the animation timer
 		this.gametimer.setUserName(this.userName);
 		this.gametimer.start();
 		GameStage.stage.show();
@@ -141,27 +140,14 @@ public class GameStage {
     		this.message = this.userName + ": ";
     		this.message += this.chat.getText() + "\n";
     		this.chat.clear();
-    		writer.println(message);
+    		writer.println("chat= "+message);
     		this.message = "";
     	});
 	}
 
-//	private void handleGameCharacter(){
-////		 Player player = (Player) in.readObject();
-//
-//		try {
-//		    // Receive player object from the server
-//			this.myShip = (Ship)in.readObject();
-//		    // Rest of the code...
-//		} catch (OptionalDataException e) {
-//		    // Handle the OptionalDataException gracefully
-//		    System.err.println("Error: Optional data missing or incompatible. Please check the serialization compatibility.");
-//		    e.printStackTrace();
-//		} catch (IOException | ClassNotFoundException e) {
-//		    e.printStackTrace();
-//		}
-//
-//	}
+	public void setWriter(String content){ //function to send message to the server (called to send the distance to the server)
+		writer.println(content);
+	}
 
 	public void startClient() {
         try {
@@ -174,7 +160,6 @@ public class GameStage {
             incomingThread.start();
 
             this.handleChat();
-//            this.handleGameCharacter();
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -187,7 +172,19 @@ public class GameStage {
             String reply;
             try {
                 while ((reply = reader.readLine()) != null) {
-                   messages.appendText(reply + "\n");
+                   String[] parts = reply.split("=");
+					 if(parts.length!=1){
+			                String event = parts[0];
+			                String data = parts[1];
+
+			                // Process the received event and data
+			                if (event.equals("chat")){
+			                    messages.appendText(data + "\n");
+			                } else if (event.equals("distance")) {
+			                	System.out.println(data);
+			                	//TODO: render data in the ui for the rank system
+			                }
+					 }
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();

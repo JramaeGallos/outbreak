@@ -410,6 +410,7 @@ public class GameTimer extends AnimationTimer{
 	private void shipSetDistance(long currentSec, long startSec, long currentNanoTime) {
 		if ((currentSec - startSec) > 1) {
 			this.myShip.setDistance();
+			stage.setWriter("distance= "+this.myShip.getName()+" : "+Integer.toString(this.myShip.getDistance()));
 			this.startDistance = currentNanoTime;
 		}
 	}

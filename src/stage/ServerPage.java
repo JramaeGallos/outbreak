@@ -14,7 +14,6 @@ public class ServerPage {
 
     public void startServer() {
         clientOutputStreams = new ArrayList<>();
-        gameCharacters = new ArrayList();
 
         try {
             ServerSocket serverSock = new ServerSocket(5000); // listen on port 5000
@@ -23,11 +22,6 @@ public class ServerPage {
                 Socket clientSock = serverSock.accept();
                 PrintWriter writer = new PrintWriter(clientSock.getOutputStream(), true);
                 clientOutputStreams.add(writer);
-
-//                ObjectOutputStream out = new ObjectOutputStream(clientSock.getOutputStream());
-//                ObjectInputStream in = new ObjectInputStream(clientSock.getInputStream());
-//                gameCharacters.add(out);
-
 
                 // create a new thread to handle incoming messages from this client
                 Thread clientThread = new Thread(new ClientHandler(clientSock));
@@ -39,26 +33,20 @@ public class ServerPage {
     }
 
 //    // send message to all connected clients
-    public void broadcast(String message) {
+    public void broadcastChat(String message) {
         for (PrintWriter writer : clientOutputStreams) {
-            writer.println(message);
+            writer.println("chat= "+message);
         }
 
     }
-//
-//    // class to handle incoming messages from a client
 
-//    public void assignCharacter(Ship character){
-//    	for (ObjectOutputStream out: gameCharacters){
-//    		try {
-//				out.writeObject(character);
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//    	}
-//
-//    }
+    public void broadcastDist(String message) {
+        for (PrintWriter writer : clientOutputStreams) {
+            writer.println("distance= "+message);
+        }
+
+    }
+
     public class ClientHandler implements Runnable {
         BufferedReader reader;
         Socket sock;
@@ -74,11 +62,25 @@ public class ServerPage {
 
         public void run() {
             String message;
-//            Ship character =new Ship(100, 100);
-//            assignCharacter(character);
                 try {
 					while ((message = reader.readLine()) != null) {
-					    broadcast(message);
+						 String[] parts = message.split("=");
+						 if(parts.length!=1){
+				                String event = parts[0];
+				                String data = parts[1];
+
+				                // Process the received event and data
+				                if (event.equals("chat")) {
+				                    // Handle Event 1
+				                    System.out.println("Received message " + data);
+				                    broadcastChat(data);
+				                } else if (event.equals("distance")) {
+				                    // Handle Event 2
+				                    System.out.println("Received distance: " + data);
+				                    broadcastDist(data);
+				                }
+						 }
+
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
