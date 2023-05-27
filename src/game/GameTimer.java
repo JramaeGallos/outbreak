@@ -67,17 +67,17 @@ public class GameTimer extends AnimationTimer{
 	private ArrayList<RoadLines> initLines;
 
 	// CONSTRUCTOR
-	public GameTimer(GraphicsContext gc, GraphicsContext gc1, Canvas canvas1, Scene theScene, GameStage stage){
+	public GameTimer(GraphicsContext gc, GraphicsContext gc1, Canvas canvas1, Scene theScene, GameStage stage, Ship myShip){
 		this.gc = gc;
 		this.gc1 = gc1;
 		this.canvas1 = canvas1;
 		this.theScene = theScene;
+		this.myShip = myShip;
 		this.timeReference = System.nanoTime();
 		this.startSpawn = System.nanoTime();	//get current nanotime
 		this.startMove = System.nanoTime();
 		this.startDistance = System.nanoTime(); // distance
 		this.startSpawnBuff = System.nanoTime();	//get current nanotime
-		this.myShip = new Ship(100,100);
 		this.init_ctr= 1;
 		this.stage = stage;
 		this.gameBackground = new Image(GameTimer.GAME_BACKGROUND_PATH, 200, GameStage.WINDOW_HEIGHT, false, false);

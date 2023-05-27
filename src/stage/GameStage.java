@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import game.GameTimer;
+import game.Ship;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -54,6 +55,9 @@ public class GameStage {
 	private String message;
 	private String userName;
 
+	//networked game
+	private Ship myShip;
+
 	//the class constructor
 	public GameStage() {
 		this.root = new Group();
@@ -66,8 +70,10 @@ public class GameStage {
 		this.gameBackground = new Image(GameStage.GAME_BACKGROUND_PATH, GameStage.WINDOW_WIDTH, GameStage.WINDOW_HEIGHT, false, false);
 		this.view= new ImageView(this.gameBackground);
 
+		this.myShip = new Ship(100,100);
 		//instantiate an animation timer
-		this.gametimer = new GameTimer(this.gc, this.gc1, this.canvas1 ,this.scene, this);
+		this.gametimer = new GameTimer(this.gc, this.gc1, this.canvas1 ,this.scene, this, this.myShip);
+
 	}
 
 	//method to add the stage elements
@@ -140,6 +146,23 @@ public class GameStage {
     	});
 	}
 
+//	private void handleGameCharacter(){
+////		 Player player = (Player) in.readObject();
+//
+//		try {
+//		    // Receive player object from the server
+//			this.myShip = (Ship)in.readObject();
+//		    // Rest of the code...
+//		} catch (OptionalDataException e) {
+//		    // Handle the OptionalDataException gracefully
+//		    System.err.println("Error: Optional data missing or incompatible. Please check the serialization compatibility.");
+//		    e.printStackTrace();
+//		} catch (IOException | ClassNotFoundException e) {
+//		    e.printStackTrace();
+//		}
+//
+//	}
+
 	public void startClient() {
         try {
             sock = new Socket("127.0.0.1", 5000); // connect to server
@@ -151,6 +174,7 @@ public class GameStage {
             incomingThread.start();
 
             this.handleChat();
+//            this.handleGameCharacter();
 
         } catch (IOException ex) {
             ex.printStackTrace();

@@ -43,6 +43,7 @@ public class GameMenu {
 	private GameMenuSubScene shownSubScene;  // to help with opening subscenes one at a time
 
 	private String userName;
+	private int numOfPlayers;
 
 	// CONSTRUCTOR
 	public GameMenu() {
@@ -55,6 +56,7 @@ public class GameMenu {
 		this.view = new ImageView();
 
 		this.userName = "";
+		this.numOfPlayers=0;
 	}
 
 	// setting the stage
@@ -78,6 +80,10 @@ public class GameMenu {
 
 	void setUserName(String user){
 		this.userName = user;
+	}
+
+	void setNumOfPlayers(int val){
+		this.numOfPlayers=val;
 	}
 
 	// create the subscene and its content

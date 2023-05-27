@@ -11,7 +11,7 @@ import stage.StartPage;
 // main class
 public class Main extends Application {
 	private boolean isServer= false;
-	//private boolean isServer= true;
+//	private boolean isServer= true;
 
 	public static void main(String[] args) {
 		launch(args);

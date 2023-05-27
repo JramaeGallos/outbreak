@@ -1,11 +1,15 @@
 package game;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import javafx.scene.image.Image;
 import stage.GameStage;
 
 // ship class (player)
-public class Ship extends Sprite{
-
+public class Ship extends Sprite implements Serializable{
 	private String name;
 	private int speed;
 	private int health;
@@ -99,6 +103,7 @@ public class Ship extends Sprite{
 	public void setDistance(){
 		this.distance += this.speed;
 	}
+
 	public void setWin(){
 		this.won = true;
 	}
