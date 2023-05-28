@@ -110,7 +110,7 @@ public class GameMenu {
 				"ESCAPE FROM THE OUTBREAK!\n"
 				+ "Avoid the viruses, run, and win the race!\n"
 
-				+ "\nDeveloper:\n"
+				+ "\nDevelopers:\n"
 				+ "* Mark Lewis S. Damalerio\n"
 				+ "* Jramae Gallos\n"
 				+ "* Leilanie F. Evora\n"

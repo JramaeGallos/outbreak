@@ -156,7 +156,8 @@ public class GameStage {
             writer = new PrintWriter(sock.getOutputStream(), true);
 
             // create a new thread to listen for incoming messages from the server
-            Thread incomingThread = new Thread(new IncomingReader());
+
+            Thread incomingThread = new Thread(new IncomingReader(this.gametimer));
             incomingThread.start();
 
             this.handleChat();
@@ -166,9 +167,23 @@ public class GameStage {
         }
     }
 
+	public interface DataCallback {
+	    void onDataReceived(String data);
+	}
+
+	public GameTimer getGameTimer() {
+		return this.gametimer;
+	}
+
     // class to listen for incoming messages from server
     public class IncomingReader implements Runnable {
-        public void run() {
+    	private DataCallback callback;
+
+    	public IncomingReader(DataCallback callback) {
+            this.callback = callback;
+        }
+
+		public void run() {
             String reply;
             try {
                 while ((reply = reader.readLine()) != null) {
@@ -181,8 +196,11 @@ public class GameStage {
 			                if (event.equals("chat")){
 			                    messages.appendText(data + "\n");
 			                } else if (event.equals("distance")) {
-			                	System.out.println(data);
+			                	//System.out.println(data);
 			                	//TODO: render data in the ui for the rank system
+
+			                	// pass data to the callback
+			                    callback.onDataReceived(data);
 			                }
 					 }
                 }

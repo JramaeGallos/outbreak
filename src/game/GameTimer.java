@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 import background_elements.RoadLines;
 import javafx.animation.AnimationTimer;
@@ -20,19 +22,21 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import stage.GameOverStage;
 import stage.GameStage;
+import stage.GameStage.DataCallback;
 import stage.PanelText;
 
 /*
  * The GameTimer is a subclass of the AnimationTimer class. It must override the handle method.
  */
 
-public class GameTimer extends AnimationTimer{
-
+public class GameTimer extends AnimationTimer implements DataCallback{
 	private GraphicsContext gc;
 	private GraphicsContext gc1;
 	private Canvas canvas1;
 	private Scene theScene;
 	private Ship myShip;
+	private String distanceToPrint;
+	private Map<String, String> rankingList;
 
 	// constants for text position in rendering status
 	private final int hpTextX = 40;
@@ -68,6 +72,7 @@ public class GameTimer extends AnimationTimer{
 
 	// CONSTRUCTOR
 	public GameTimer(GraphicsContext gc, GraphicsContext gc1, Canvas canvas1, Scene theScene, GameStage stage, Ship myShip){
+		this.rankingList = new HashMap<>();
 		this.gc = gc;
 		this.gc1 = gc1;
 		this.canvas1 = canvas1;
@@ -427,7 +432,7 @@ public class GameTimer extends AnimationTimer{
 	}
 
 	// render text (speed, distance, health)
-	private void textRender(GraphicsContext gc, long currentSec) {
+	public void textRender(GraphicsContext gc, long currentSec) {
         this.gc.fillText("Speed: " + this.myShip.getSpeed(), this.hpTextX, this.textY);
         this.gc.fillText("Distance: " + this.myShip.getDistance(), this.timeTextX, this.textY);
         this.gc.fillText("Health: " + this.myShip.getHealth(), this.healthTextX, this.textY);
@@ -436,12 +441,43 @@ public class GameTimer extends AnimationTimer{
         }
     }
 
+	@Override
+    public void onDataReceived(String data) {
+		System.out.println(data);
+
+		String[] parts = data.split(":");
+		String username = parts[0];
+		String distanceStr = parts[1];
+
+		// add / update distances of players
+		this.rankingList.put(username, distanceStr);
+
+		// this.distanceToPrint = data;
+    }
+
 	//render in-game rankings
 	private void rankRender(GraphicsContext gc){
 		this.gc.fillText("RANKINGS", 870, 50);
-		for (int i = 0; i < this.maxPlayer; i++){
-			this.gc.fillText((i+1) + "\t" + this.userName + "\t " + this.myShip.getDistance(), 830, 100 + (i * 30));
+//		for (int i = 0; i < this.maxPlayer; i++){
+//			this.gc.fillText((i+1) + "\t" + this.userName + "\t " + this.myShip.getDistance(), 830, 100 + (i * 30));
+//		}
+
+		try {
+			int i = 0;
+			for (Map.Entry<String, String> entry : this.rankingList.entrySet()) {
+	            String username = entry.getKey();
+	            String distance = entry.getValue();
+
+	            this.gc.fillText((i+1) + "\t" + username + "\t " + distance, 830, 100 + (i * 30));
+	            i++;
+			}
+		} catch (Exception e) {
+			System.out.println(e);
 		}
+	}
+
+	public GraphicsContext getGc() {
+		return this.gc;
 	}
 
 	// GETTER
