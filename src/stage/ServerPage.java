@@ -8,7 +8,8 @@ import java.util.*;
 import game.Ship;
 
 public class ServerPage {
-
+	private int numOfPlayer;
+	private int maxPlayer;
     ArrayList<PrintWriter> clientOutputStreams;
     ArrayList<ObjectOutputStream> gameCharacters;
 
@@ -35,17 +36,32 @@ public class ServerPage {
 //    // send message to all connected clients
     public void broadcastChat(String message) {
         for (PrintWriter writer : clientOutputStreams) {
-            writer.println("chat= "+message);
+            writer.println("chat= "+ message);
         }
 
     }
 
     public void broadcastDist(String message) {
         for (PrintWriter writer : clientOutputStreams) {
-            writer.println("distance= "+message);
+            writer.println("distance= "+ message);
         }
 
     }
+
+    public void broadcastStart(){
+    	if (this.numOfPlayer == this.maxPlayer){
+    		for (PrintWriter writer : clientOutputStreams) {
+                writer.println("START");
+            }
+    	} else {
+            System.out.println("Not all players are ready to start the game.");
+        }
+
+    }
+
+    private void setNumOfPlayers(String data) {
+    	this.maxPlayer = Integer.parseInt(data);
+	}
 
     public class ClientHandler implements Runnable {
         BufferedReader reader;
@@ -76,8 +92,17 @@ public class ServerPage {
 				                    broadcastChat(data);
 				                } else if (event.equals("distance")) {
 				                    // Handle Event 2
-//				                    System.out.println("Received distance: " + data);
+				                    System.out.println("Received distance: " + data);
 				                    broadcastDist(data);
+				                } else if (event.equals("players")) {
+				                    // Handle Event 3
+				                	System.out.println("Number of Players: " + data);
+				                    setNumOfPlayers(data);
+				                }else if (event.equals("status")) {
+				                    // Handle Event 3
+				                	numOfPlayer++;
+				                	System.out.println("Player Status: " + data);
+				                    broadcastStart();
 				                }
 						 }
 

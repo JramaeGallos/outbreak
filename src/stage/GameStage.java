@@ -59,7 +59,8 @@ public class GameStage {
 	private Ship myShip;
 
 	//the class constructor
-	public GameStage() {
+	public GameStage(Socket sock) {
+		this.sock = sock;
 		this.root = new Group();
 		this.scene = new Scene(this.root, GameStage.WINDOW_EXTENDED_WIDTH,GameStage.WINDOW_HEIGHT,Color.GRAY);
 		this.canvas = new Canvas(GameStage.WINDOW_EXTENDED_WIDTH,GameStage.WINDOW_HEIGHT);
@@ -80,10 +81,8 @@ public class GameStage {
 	public void setStage(Stage stage) {
 		GameStage.stage = stage;
 		this.root.getChildren().addAll(view, canvas, canvas1);
-
 		GameStage.stage.setTitle("OUTBREAK!");
 		GameStage.stage.getIcons().add(GameMenu.icon);	//add icon to stage
-
 		GameStage.stage.setScene(this.scene); // MARK: show elements unique to this stage
 
 		this.createTextField();

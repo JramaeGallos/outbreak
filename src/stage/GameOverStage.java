@@ -84,8 +84,8 @@ public class GameOverStage {
 		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				GameStage playGame = new GameStage();
-				playGame.setStage(GameStage.stage);
+//				GameStage playGame = new GameStage();
+//				playGame.setStage(GameStage.stage);
 			}
 		});
 	}
