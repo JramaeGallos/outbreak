@@ -1,10 +1,6 @@
 package game;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
 import javafx.scene.image.Image;
 import stage.GameStage;
 
@@ -136,6 +132,4 @@ public class Ship extends Sprite implements Serializable{
 			this.y += this.dy; // MARK: add the dy (vertical move value)
 		}
 	}
-
-
 }
