@@ -76,7 +76,7 @@ public class ServerPage {
 				                    broadcastChat(data);
 				                } else if (event.equals("distance")) {
 				                    // Handle Event 2
-				                    System.out.println("Received distance: " + data);
+//				                    System.out.println("Received distance: " + data);
 				                    broadcastDist(data);
 				                }
 						 }

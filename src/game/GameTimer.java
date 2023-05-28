@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import background_elements.RoadLines;
@@ -35,8 +37,7 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 	private Canvas canvas1;
 	private Scene theScene;
 	private Ship myShip;
-	private String distanceToPrint;
-	private Map<String, String> rankingList;
+	private Map<String, Integer> rankingList;
 
 	// constants for text position in rendering status
 	private final int hpTextX = 40;
@@ -44,7 +45,6 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 	private final int healthTextX = 570;
 	private final int textY = 40;
 	private final int maxDistance = 100;
-	private final int maxPlayer = 3;
 
 	private long timeReference;
 	private long startSpawn;
@@ -53,7 +53,6 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 	private long startDistance;
 	private boolean hasMask;
 	private int init_ctr;
-	private String userName;
 	private Image gameBackground;
 	private GameStage stage;
 	private final static String GAME_BACKGROUND_PATH = "stage/resources/gray_background.jpg";
@@ -397,17 +396,32 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 		this.myShip.setDY(0);
 	}
 
+	private void setUpGameOver(String name){
+		this.myShip.die();
+		GameOverStage gameover = new GameOverStage(0, name);
+		GameStage.stage.setScene(gameover.getScene());
+		this.stop();
+	}
+
 	private void checkGameOver(long gameTime) {
-		if (this.myShip.getHealth() <= 0) {
-			this.myShip.die();
-			GameOverStage gameover = new GameOverStage(0);
-			GameStage.stage.setScene(gameover.getScene());
-			this.stop();
-		} else if (this.myShip.getDistance() >= this.maxDistance) {
+		if (this.myShip.getDistance() >= this.maxDistance) {
 			this.myShip.setWin();
-			GameOverStage gameover = new GameOverStage(1);
+			GameOverStage gameover = new GameOverStage(1, null);
 			GameStage.stage.setScene(gameover.getScene());
 			this.stop();
+		// If one of the players already won the game
+		} else if (this.rankingList.containsValue(this.maxDistance)) {
+			// Finding the username of the player who won the game
+			String key = null;
+	        for (Map.Entry<String, Integer> entry : this.rankingList.entrySet()) {
+	            if (entry.getValue() >= this.maxDistance) {
+	                key = entry.getKey();
+	                break;
+	            }
+	        }
+			this.setUpGameOver(key);
+		} else if (this.myShip.getHealth() <= 0) {
+			this.setUpGameOver(null);
 		}
 	}
 
@@ -443,32 +457,29 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 
 	@Override
     public void onDataReceived(String data) {
-		System.out.println(data);
+		// System.out.println(data);
 
-		String[] parts = data.split(":");
+		String[] parts = data.split(": ");
 		String username = parts[0];
-		String distanceStr = parts[1];
+		int distance = Integer.parseInt(parts[1]);
 
 		// add / update distances of players
-		this.rankingList.put(username, distanceStr);
-
-		// this.distanceToPrint = data;
+		this.rankingList.put(username, distance);
     }
 
 	//render in-game rankings
 	private void rankRender(GraphicsContext gc){
 		this.gc.fillText("RANKINGS", 870, 50);
-//		for (int i = 0; i < this.maxPlayer; i++){
-//			this.gc.fillText((i+1) + "\t" + this.userName + "\t " + this.myShip.getDistance(), 830, 100 + (i * 30));
-//		}
 
 		try {
-			int i = 0;
-			for (Map.Entry<String, String> entry : this.rankingList.entrySet()) {
-	            String username = entry.getKey();
-	            String distance = entry.getValue();
+			// sorting the dictionary in descending order
+			List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(this.rankingList.entrySet());
+			sortedEntries.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
 
-	            this.gc.fillText((i+1) + "\t" + username + "\t " + distance, 830, 100 + (i * 30));
+	        // Iterate over the sorted entries and print the keys and values
+	        int i = 0;
+	        for (Map.Entry<String, Integer> entry : sortedEntries) {
+	            this.gc.fillText((i+1) + "\t" + entry.getKey() + "\t " + entry.getValue(), 830, 100 + (i * 30));
 	            i++;
 			}
 		} catch (Exception e) {
@@ -486,7 +497,6 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 	}
 
 	public void setUserName(String user){
-		this.userName = user;
 		this.myShip.setName(user);
 	}
 }
