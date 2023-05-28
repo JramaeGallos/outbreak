@@ -196,9 +196,6 @@ public class GameStage {
 			                if (event.equals("chat")){
 			                    messages.appendText(data + "\n");
 			                } else if (event.equals("distance")) {
-			                	//System.out.println(data);
-			                	//TODO: render data in the ui for the rank system
-
 			                	// pass data to the callback
 			                    callback.onDataReceived(data);
 			                }

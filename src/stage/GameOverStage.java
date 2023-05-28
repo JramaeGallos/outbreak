@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import game.GameTimer;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -29,11 +28,13 @@ public class GameOverStage {
 	private GraphicsContext gc;
 	private Canvas canvas;
 	private ImageView view;
+	private String winner;
 	public final static String FONT_PATH = "src/stage/resources/kenvector_future.ttf";
 	public final Image bg = new Image("stage/resources/menu_background.png",GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT,false,false);
 
 	// CONSTRUCTOR
-	public GameOverStage(int num){
+	public GameOverStage(int num, String name){
+		this.winner = name;
 		this.pane = new StackPane();
 		this.vbox = new VBox();
 		this.scene = new Scene(pane, GameStage.WINDOW_WIDTH,GameStage.WINDOW_HEIGHT);
@@ -62,6 +63,7 @@ public class GameOverStage {
 			this.gc.fillText("YOU WIN!", Math.round(canvas.getWidth()/2), 150);
 		} else { //for lose
 			this.gc.fillText("GAME OVER!", Math.round(canvas.getWidth()/2), 150);
+			this.gc.fillText(this.winner + " WON THE GAME!!!", Math.round(canvas.getWidth()/2), 400);
 		}
 
 		this.createBackground();
