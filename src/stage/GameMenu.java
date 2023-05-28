@@ -83,7 +83,7 @@ public class GameMenu {
 	}
 
 	void setNumOfPlayers(int val){
-		this.numOfPlayers=val;
+		this.numOfPlayers = val;
 	}
 
 	// create the subscene and its content
@@ -204,8 +204,9 @@ public class GameMenu {
 		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				GameStage playGame = new GameStage();
+				LoadingPage playGame = new LoadingPage();
 				playGame.setUserName(userName);
+				playGame.setNumOfPlayers(numOfPlayers);
 				playGame.setStage(menuStage);
 			}
 		});
