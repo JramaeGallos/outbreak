@@ -44,7 +44,7 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 	private final int timeTextX = 300;
 	private final int healthTextX = 570;
 	private final int textY = 40;
-	private final int maxDistance = 100;
+	private final int maxDistance = 30;
 
 	private long timeReference;
 	private long startSpawn;
@@ -404,13 +404,22 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 	}
 
 	private void checkGameOver(long gameTime) {
+
+		boolean onePlayerWon = false;
+
+		for (Map.Entry<String, Integer> entry : this.rankingList.entrySet()) {
+			if (entry.getValue() >= this.maxDistance) {
+				onePlayerWon = true;
+			}
+		}
+
 		if (this.myShip.getDistance() >= this.maxDistance) {
 			this.myShip.setWin();
 			GameOverStage gameover = new GameOverStage(1, null);
 			GameStage.stage.setScene(gameover.getScene());
 			this.stop();
 		// If one of the players already won the game
-		} else if (this.rankingList.containsValue(this.maxDistance)) {
+		} else if (onePlayerWon) {
 			// Finding the username of the player who won the game
 			String key = null;
 	        for (Map.Entry<String, Integer> entry : this.rankingList.entrySet()) {
