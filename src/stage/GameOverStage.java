@@ -63,7 +63,14 @@ public class GameOverStage {
 			this.gc.fillText("YOU WIN!", Math.round(canvas.getWidth()/2), 150);
 		} else { //for lose
 			this.gc.fillText("GAME OVER!", Math.round(canvas.getWidth()/2), 150);
-			this.gc.fillText(this.winner + " WON THE GAME!!!", Math.round(canvas.getWidth()/2), 400);
+			if (this.winner != null) {
+				try {
+					this.gc.setFont(Font.loadFont(new FileInputStream(new File(FONT_PATH)), 30));
+				} catch (FileNotFoundException e) {
+					this.gc.setFont(Font.font("Verdana", 30));
+				}
+				this.gc.fillText(this.winner + " WON THE GAME!!!", Math.round(canvas.getWidth()/2), 410);
+			}
 		}
 
 		this.createBackground();
