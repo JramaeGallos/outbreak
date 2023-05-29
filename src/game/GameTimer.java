@@ -450,6 +450,7 @@ public class GameTimer extends AnimationTimer implements DataCallback{
         this.gc.fillText("Speed: " + this.myShip.getSpeed(), this.hpTextX, this.textY);
         this.gc.fillText("Distance: " + this.myShip.getDistance(), this.timeTextX, this.textY);
         this.gc.fillText("Health: " + this.myShip.getHealth(), this.healthTextX, this.textY);
+        this.gc.fillText(this.myShip.getName(), this.myShip.getX(), this.myShip.getY() + 100);
         if (this.myShip.getImmortal()) {
         	this.gc.fillText("IMMUNE!", this.myShip.getX()-10, this.myShip.getY());
         }
