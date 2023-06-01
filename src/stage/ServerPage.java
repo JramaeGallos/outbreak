@@ -8,8 +8,8 @@ import java.util.*;
 import game.Ship;
 
 public class ServerPage {
-	private int numOfPlayer;
-	private int maxPlayer;
+	private int numOfPlayer=0;
+	private int maxPlayer=0;
     ArrayList<PrintWriter> clientOutputStreams;
     ArrayList<ObjectOutputStream> gameCharacters;
 
@@ -48,8 +48,20 @@ public class ServerPage {
 
     }
 
+    public void broadcastGameOver(String message){
+    	for (PrintWriter writer : clientOutputStreams) {
+            writer.println("gameOver= "+ message);
+        }
+    }
+
     public void broadcastStart(){
-    	if (this.numOfPlayer == this.maxPlayer){
+    	if (this.numOfPlayer == 1){
+    		for (PrintWriter writer : clientOutputStreams) {
+                writer.println("GetNumOfPlayer");
+                System.out.println("Get the number of players.");
+            }
+    	}
+    	else if (this.numOfPlayer == this.maxPlayer){
     		for (PrintWriter writer : clientOutputStreams) {
                 writer.println("START");
             }
@@ -98,11 +110,16 @@ public class ServerPage {
 				                    // Handle Event 3
 				                	System.out.println("Number of Players: " + data);
 				                    setNumOfPlayers(data);
+				                } else if (event.equals("gameOver")) {
+				                    // Handle Event 3
+				                	System.out.println("GameOver " + data);
+				                    broadcastGameOver(data);
 				                }else if (event.equals("status")) {
 				                    // Handle Event 3
 				                	numOfPlayer++;
+				                	System.out.println(numOfPlayer);
+				                	broadcastStart();
 				                	System.out.println("Player Status: " + data);
-				                    broadcastStart();
 				                }
 						 }
 

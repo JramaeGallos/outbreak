@@ -74,7 +74,6 @@ public class GameOverStage {
 		}
 
 		this.createBackground();
-		this.createStartButton();
 		this.createExitButton();
 		this.pane.getChildren().addAll(this.canvas,vbox);
 	}
@@ -83,19 +82,6 @@ public class GameOverStage {
 		this.pane.getChildren().add(this.view);
 	}
 
-	// create buttons
-	private void createStartButton() {
-		GameButton button = new GameButton("AGAIN!");
-		this.vbox.getChildren().add(button);
-
-		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent e) {
-//				GameStage playGame = new GameStage();
-//				playGame.setStage(GameStage.stage);
-			}
-		});
-	}
 	private void createExitButton() {
 		GameButton button = new GameButton("EXIT");
 		this.vbox.getChildren().add(button);

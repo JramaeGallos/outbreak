@@ -197,6 +197,8 @@ public class GameStage {
 			                } else if (event.equals("distance")) {
 			                	// pass data to the callback
 			                    callback.onDataReceived(data);
+			                } else if (event.equals("gameOver")){
+			                	messages.appendText(data + " is out of the game. \n");
 			                }
 					 }
                 }
