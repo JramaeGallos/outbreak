@@ -31,7 +31,6 @@ public class StartPage {
 	private ArrayList<GameButton> startButtons;
 
 	private TextField userNameField;
-	private TextField numOfPlayerField;
 
 
 	//Constructor
@@ -45,7 +44,6 @@ public class StartPage {
 
 		this.startButtons = new ArrayList<GameButton>();
 		this.userNameField= new TextField();
-		this.numOfPlayerField = new TextField();
 	}
 
 	// setting the stage
@@ -69,13 +67,6 @@ public class StartPage {
 			this.userNameField.setLayoutY(250);
 			this.userNameField.setPromptText("Enter your user name ");
 			this.startRoot.getChildren().add(this.userNameField);
-
-
-			this.numOfPlayerField.setAlignment(Pos.CENTER);
-			this.numOfPlayerField.setLayoutX(320);
-			this.numOfPlayerField.setLayoutY(300);
-			this.numOfPlayerField.setPromptText("Enter number of players ");
-			this.startRoot.getChildren().add(this.numOfPlayerField);
 		}
 
 
@@ -117,7 +108,6 @@ public class StartPage {
 				public void handle(MouseEvent e) {
 					GameMenu menu = new GameMenu();
 					menu.setUserName(userNameField.getText());
-					menu.setNumOfPlayers(Integer.parseInt(numOfPlayerField.getText()));
 					menu.setStage(startStage);
 				}
 			});

@@ -1,13 +1,19 @@
 package stage;
 
+import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Optional;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,8 +37,6 @@ public class LoadingPage {
 	public final static int START_BUTTONS_START_X = 330;
 	public final static int START_BUTTONS_START_Y = 220;
 	private String userName;
-	private int numOfPlayers;
-
 
 	//Constructor
 	public LoadingPage(){
@@ -43,6 +47,7 @@ public class LoadingPage {
 		this.startBackground = new Image(START_BACKGROUND_PATH);
 		this.view = new ImageView();
 		this.userName = "";
+
 	}
 
 	// setting the stage
@@ -85,6 +90,8 @@ public class LoadingPage {
 			this.startRoot.getChildren().add(button);
 		}
 
+
+
 		private void createClient(){
 			GameButton button = new GameButton("READY");
 			addStartButton(button);
@@ -96,12 +103,14 @@ public class LoadingPage {
 						 sock = new Socket("127.0.0.1", 5000); // connect to server
 						 BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 						 PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
-				         out.println("players=" + numOfPlayers);
 				         String serverMessage;
 				         out.println("status=ready");
 
 			            while ((serverMessage = in.readLine()) != null) {
-			                if (serverMessage.equals("START")) {
+			            	if (serverMessage.equals("GetNumOfPlayer")){
+			            		showAlertWithTextField(out);
+			            	}
+			            	else if (serverMessage.equals("START")) {
 			                	GameStage playGame = new GameStage(sock);
 								playGame.setUserName(userName);
 								playGame.setStage(loadingStage);
@@ -115,11 +124,32 @@ public class LoadingPage {
 			});
 		}
 
+		private void showAlertWithTextField(PrintWriter out) {
+	        // Create an alert dialog
+	        Alert alert = new Alert(Alert.AlertType.NONE);
+	        alert.setTitle("Host Player");
+	        alert.setHeaderText(null);
+
+	        // Create a TextField
+	        TextField numOfPlayerField = new TextField();
+	        numOfPlayerField.setPromptText("Enter number of users ");
+
+	        // Set the custom dialog content
+	        alert.getDialogPane().setContent(numOfPlayerField);
+
+	        // Add OK button
+	        alert.getDialogPane().getButtonTypes().add(ButtonType.OK);
+
+	        // Show the alert and wait for user input
+	        Optional<ButtonType> result = alert.showAndWait();
+
+	        if (result.isPresent() && result.get() == ButtonType.OK) {
+	            String input = numOfPlayerField.getText();
+	            out.println("players=" + input);
+	        }
+	    }
+
 		public void setUserName(String user){
 			this.userName = user;
-		}
-
-		public void setNumOfPlayers(int val){
-			this.numOfPlayers = val;
 		}
 }

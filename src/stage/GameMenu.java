@@ -56,7 +56,6 @@ public class GameMenu {
 		this.view = new ImageView();
 
 		this.userName = "";
-		this.numOfPlayers=0;
 	}
 
 	// setting the stage
@@ -206,7 +205,6 @@ public class GameMenu {
 			public void handle(MouseEvent e) {
 				LoadingPage playGame = new LoadingPage();
 				playGame.setUserName(userName);
-				playGame.setNumOfPlayers(numOfPlayers);
 				playGame.setStage(menuStage);
 			}
 		});

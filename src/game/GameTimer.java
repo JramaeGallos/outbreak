@@ -397,6 +397,7 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 	}
 
 	private void setUpGameOver(String name){
+		stage.setWriter("gameOver= "+this.myShip.getName());
 		this.myShip.die();
 		GameOverStage gameover = new GameOverStage(0, name);
 		GameStage.stage.setScene(gameover.getScene());
