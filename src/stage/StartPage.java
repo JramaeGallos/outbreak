@@ -1,6 +1,7 @@
 package stage;
 
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
@@ -63,12 +64,34 @@ public class StartPage {
 
 		private void createTextField(){
 			this.userNameField.setAlignment(Pos.CENTER);
-			this.userNameField.setLayoutX(320);
-			this.userNameField.setLayoutY(250);
+		    double parentWidth = this.startRoot.getWidth();
+		    double parentHeight = this.startRoot.getHeight();
+
+		    this.userNameField.setPrefWidth(300);
+
+		    // Calculate the centered position
+		    double centerX = (parentWidth - this.userNameField.getPrefWidth()) / 2;
+		    double centerY = (parentHeight - this.userNameField.getHeight()) / 2;
+		    this.userNameField.setLayoutX(centerX);
+		    this.userNameField.setLayoutY(centerY);
+
+
+			this.userNameField.setStyle(
+				"-fx-background-color: #6d6d6d; "  // CF1F1F
+				+ "-fx-text-fill: #b3b144;"
+				+ "-fx-font-size: 20px;"
+				+ "-fx-padding: 5px;"
+				+ "-fx-border-color: #CCCCCC;"
+				+ "-fx-border-width: 2px;"
+				+ "-fx-font-family: 'Sans-serif';"
+				+ "-fx-font-weight: bold;"
+				+ "-fx-border-radius: 10px;"
+				+ "-fx-background-radius: 10px;"
+			);
+
 			this.userNameField.setPromptText("Enter your user name ");
 			this.startRoot.getChildren().add(this.userNameField);
 		}
-
 
 		// setting the start background
 		private void createBackground() {
@@ -106,9 +129,28 @@ public class StartPage {
 			button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent e) {
-					GameMenu menu = new GameMenu();
-					menu.setUserName(userNameField.getText());
-					menu.setStage(startStage);
+
+					if (userNameField.getText().isEmpty()) {
+						// send an alert
+						Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				        alert.setTitle("Error");
+				        alert.setHeaderText(null);
+				        alert.setContentText("User name must not be empty!");
+				        alert.showAndWait();
+					} else if (userNameField.getText().length() >= 10) {
+						Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				        alert.setTitle("Error");
+				        alert.setHeaderText(null);
+				        alert.setContentText("User name must be less than 10 characters!");
+				        alert.showAndWait();
+					} else {
+						// valid username
+						GameMenu menu = new GameMenu();
+						menu.setUserName(userNameField.getText());
+						menu.setStage(startStage);
+					}
+
+
 				}
 			});
 		}
