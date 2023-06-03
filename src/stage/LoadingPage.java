@@ -1,19 +1,15 @@
 package stage;
 
-import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Optional;
-
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -48,7 +44,6 @@ public class LoadingPage {
 		this.startBackground = new Image(START_BACKGROUND_PATH);
 		this.view = new ImageView();
 		this.userName = "";
-
 	}
 
 	// setting the stage
@@ -90,7 +85,6 @@ public class LoadingPage {
 			button.setLayoutY(START_BUTTONS_START_Y);
 			this.startRoot.getChildren().add(button);
 		}
-
 
 		private void createClient(){
 			GameButton button = new GameButton("READY");
@@ -141,7 +135,7 @@ public class LoadingPage {
 
 	        // Create a TextField
 	        TextField numOfPlayerField = new TextField();
-	        numOfPlayerField.setPromptText("Enter number of users ");
+	        numOfPlayerField.setPromptText("Enter number of users (4-6)");
 
 	        // Calculate the centered position
 	        double parentWidth = this.startRoot.getWidth();
@@ -192,7 +186,21 @@ public class LoadingPage {
 	                    emptyAlert.setHeaderText(null);
 	                    emptyAlert.setContentText("Please enter a valid number!");
 	                    emptyAlert.showAndWait();
-	                } else {
+	                } else if (Integer.parseInt(input) < 4) {
+	                	// Create another alert for invalid number
+	                    Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
+	                    emptyAlert.setTitle("Invalid Input");
+	                    emptyAlert.setHeaderText(null);
+	                    emptyAlert.setContentText("Number of players must not be less than 4!");
+	                    emptyAlert.showAndWait();
+	                } else if (Integer.parseInt(input) > 6) {
+	                	// Create another alert for invalid number
+	                    Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
+	                    emptyAlert.setTitle("Invalid Input");
+	                    emptyAlert.setHeaderText(null);
+	                    emptyAlert.setContentText("Number of players must not be more than 6!");
+	                    emptyAlert.showAndWait();
+	                }else {
 	                    out.println("players=" + input);
 	                    error = false; // Set validInput to true to exit the loop
 	                }
