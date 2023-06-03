@@ -468,8 +468,6 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 
 	@Override
     public void onDataReceived(String data) {
-		// System.out.println(data);
-
 		String[] parts = data.split(": ");
 		String username = parts[0];
 		int distance = Integer.parseInt(parts[1]);
@@ -480,7 +478,7 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 
 	//render in-game rankings
 	private void rankRender(GraphicsContext gc){
-		this.gc.fillText("RANKINGS", 870, 50);
+		this.gc.fillText("RANKINGS", 870, 30);
 
 		try {
 			// sorting the dictionary in descending order
@@ -490,9 +488,10 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 	        // Iterate over the sorted entries and print the keys and values
 	        int i = 0;
 	        for (Map.Entry<String, Integer> entry : sortedEntries) {
-	            this.gc.fillText((i+1) + "\t" + entry.getKey() + "\t " + entry.getValue(), 830, 100 + (i * 30));
+	            this.gc.fillText((i+1) + "\t" + entry.getKey() + "\t" + entry.getValue(), 830, 70 + (i * 25));
 	            i++;
 			}
+
 		} catch (Exception e) {
 			System.out.println(e);
 		}
