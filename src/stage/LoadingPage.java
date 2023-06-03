@@ -5,12 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Optional;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -60,6 +56,14 @@ public class LoadingPage {
 			this.loadingStage.show();
 		}
 
+		public void setUserName(String user){
+			this.userName = user;
+		}
+
+		public void setSocket(Socket sock){
+			this.sock = sock;
+		}
+
 		// setting the start background
 		private void createBackground() {
 			this.view.setImage(this.startBackground);
@@ -94,124 +98,35 @@ public class LoadingPage {
 				@Override
 				public void handle(MouseEvent e) {
 					try {
-						 sock = new Socket("127.0.0.1", 5000); // connect to server
-						 BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-						 PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
-				         String serverMessage;
-				         out.println("status=ready");
-
+						BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+						PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
+				        String serverMessage;
+				        out.println("ready=" + userName);
 			            while ((serverMessage = in.readLine()) != null) {
-			            	if (serverMessage.equals("GetNumOfPlayer")){
-			            		showAlertWithTextField(out);
-			            	}
-			            	else if (serverMessage.equals("START")) {
-			                	GameStage playGame = new GameStage(sock);
-								playGame.setUserName(userName);
-								playGame.setStage(loadingStage);
-			                    break;
-			                }
+			            	String[] parts = serverMessage.split("=");
+							if(parts.length!=1){
+					                String event = parts[0];
+					                String data = parts[1];
+					                if (event.equals("host") && userName.equals(data)){
+					            		HostPage hostPage = new HostPage();
+					            		hostPage.setUserName(userName);
+					            		hostPage.setSocket(sock);
+					            		hostPage.setStage(loadingStage);
+					    				break;
+					            	}
+							}else{
+								if (serverMessage.equals("START")) {
+				                	GameStage playGame = new GameStage(sock);
+									playGame.setUserName(userName);
+									playGame.setStage(loadingStage);
+				                    break;
+				                }
+							}
 			            }
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 				}
 			});
-		}
-
-		public static boolean isInteger(String input) {
-		    try {
-		        Integer.parseInt(input);
-		        return true;
-		    } catch (NumberFormatException e) {
-		        return false;
-		    }
-		}
-
-		private void showAlertWithTextField(PrintWriter out) {
-	        // Create an alert dialog
-	        Alert alert = new Alert(Alert.AlertType.NONE);
-	        alert.setTitle("Host Player");
-	        alert.setHeaderText(null);
-
-	        // Create a TextField
-	        TextField numOfPlayerField = new TextField();
-	        numOfPlayerField.setPromptText("Enter number of users (4-6)");
-
-	        // Calculate the centered position
-	        double parentWidth = this.startRoot.getWidth();
-		    double parentHeight = this.startRoot.getHeight();
-		    double centerX = (parentWidth - numOfPlayerField.getPrefWidth()) / 2;
-		    double centerY = (parentHeight - numOfPlayerField.getHeight()) / 2;
-		    numOfPlayerField.setLayoutX(centerX);
-		    numOfPlayerField.setLayoutY(centerY);
-			numOfPlayerField.setStyle(
-				"-fx-background-color: #6d6d6d; "  // CF1F1F
-				+ "-fx-text-fill: #b3b144;"
-				+ "-fx-font-size: 10px;"
-				+ "-fx-padding: 5px;"
-				+ "-fx-border-color: #CCCCCC;"
-				+ "-fx-border-width: 2px;"
-				+ "-fx-font-family: 'Sans-serif';"
-				+ "-fx-font-weight: bold;"
-				+ "-fx-border-radius: 10px;"
-				+ "-fx-background-radius: 10px;"
-			);
-
-	        // Set the custom dialog content
-	        alert.getDialogPane().setContent(numOfPlayerField);
-
-	        // Add OK button
-	        alert.getDialogPane().getButtonTypes().add(ButtonType.OK);
-
-	        // check for errors in input, ask user again if there is an error
-	        boolean error = true;
-	        while (error) {
-	            // Show the alert and wait for user input
-	            Optional<ButtonType> result = alert.showAndWait();
-
-	            if (result.isPresent() && result.get() == ButtonType.OK) {
-	                String input = numOfPlayerField.getText();
-
-	                if (input.isEmpty()) {
-	                    // Create another alert for empty input
-	                    Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
-	                    emptyAlert.setTitle("Invalid Input");
-	                    emptyAlert.setHeaderText(null);
-	                    emptyAlert.setContentText("Number of users cannot be empty!");
-	                    emptyAlert.showAndWait();
-	                } else if (!isInteger(input)) {
-	                	// Create another alert for invalid number
-	                    Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
-	                    emptyAlert.setTitle("Invalid Input");
-	                    emptyAlert.setHeaderText(null);
-	                    emptyAlert.setContentText("Please enter a valid number!");
-	                    emptyAlert.showAndWait();
-	                } else if (Integer.parseInt(input) < 4) {
-	                	// Create another alert for invalid number
-	                    Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
-	                    emptyAlert.setTitle("Invalid Input");
-	                    emptyAlert.setHeaderText(null);
-	                    emptyAlert.setContentText("Number of players must not be less than 4!");
-	                    emptyAlert.showAndWait();
-	                } else if (Integer.parseInt(input) > 6) {
-	                	// Create another alert for invalid number
-	                    Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
-	                    emptyAlert.setTitle("Invalid Input");
-	                    emptyAlert.setHeaderText(null);
-	                    emptyAlert.setContentText("Number of players must not be more than 6!");
-	                    emptyAlert.showAndWait();
-	                }else {
-	                    out.println("players=" + input);
-	                    error = false; // Set validInput to true to exit the loop
-	                }
-	            } else {
-	                // User clicked on Cancel or closed the dialog
-	                break; // Exit the loop
-	            }
-	        }
-	    }
-
-		public void setUserName(String user){
-			this.userName = user;
 		}
 }
