@@ -5,13 +5,12 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import game.Ship;
-
 public class ServerPage {
 	private int numOfPlayer=0;
 	private int maxPlayer=0;
     ArrayList<PrintWriter> clientOutputStreams;
     ArrayList<ObjectOutputStream> gameCharacters;
+    ArrayList<String> usernames = new ArrayList<>();
 
     public void startServer() {
         clientOutputStreams = new ArrayList<>();
@@ -75,6 +74,20 @@ public class ServerPage {
     	this.maxPlayer = Integer.parseInt(data);
 	}
 
+    private void checkUsername(String name){
+    	if (this.usernames.contains(name)){
+    		for (PrintWriter writer : clientOutputStreams) {
+                writer.println("DENIED");
+            }
+    		System.out.println("Username " + name + " exits!" );
+    	}else{
+    		this.usernames.add(name);
+    		for (PrintWriter writer : clientOutputStreams) {
+                writer.println("ACCEPTED");
+            }
+    	}
+    }
+
     public class ClientHandler implements Runnable {
         BufferedReader reader;
         Socket sock;
@@ -111,15 +124,18 @@ public class ServerPage {
 				                	System.out.println("Number of Players: " + data);
 				                    setNumOfPlayers(data);
 				                } else if (event.equals("gameOver")) {
-				                    // Handle Event 3
+				                    // Handle Event 4
 				                	System.out.println("GameOver " + data);
 				                    broadcastGameOver(data);
 				                }else if (event.equals("status")) {
-				                    // Handle Event 3
+				                    // Handle Event 5
 				                	numOfPlayer++;
 				                	System.out.println(numOfPlayer);
 				                	broadcastStart();
 				                	System.out.println("Player Status: " + data);
+				                }else if (event.equals("username")) {
+				                    // Handle Event 6
+				                	checkUsername(data);
 				                }
 						 }
 

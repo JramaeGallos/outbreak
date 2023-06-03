@@ -1,10 +1,13 @@
 package stage;
 
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
-
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -20,6 +23,7 @@ public class StartPage {
 	private AnchorPane startRoot;
 	private Scene startScene;
 	private Stage startStage;
+	private Socket sock;
 
 	private ImageView view;
 	private Image startBackground;
@@ -130,6 +134,8 @@ public class StartPage {
 				@Override
 				public void handle(MouseEvent e) {
 
+
+
 					if (userNameField.getText().isEmpty()) {
 						// send an alert
 						Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -145,12 +151,34 @@ public class StartPage {
 				        alert.showAndWait();
 					} else {
 						// valid username
-						GameMenu menu = new GameMenu();
-						menu.setUserName(userNameField.getText());
-						menu.setStage(startStage);
+						// Check if username is unique
+						try {
+							 sock = new Socket("127.0.0.1", 5000); // connect to server
+							 BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+							 PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
+					         String serverMessage;
+					         // send the username to the server for checking
+					         out.println("username=" + userNameField.getText());
+
+				            while ((serverMessage = in.readLine()) != null) {
+				            	if (serverMessage.equals("ACCEPTED")){
+				            		GameMenu menu = new GameMenu();
+									menu.setUserName(userNameField.getText());
+									menu.setStage(startStage);
+									break;
+				            	} else if (serverMessage.equals("DENIED")) {
+				            		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+							        alert.setTitle("Error");
+							        alert.setHeaderText(null);
+							        alert.setContentText("Username already in use!");
+							        alert.showAndWait();
+				                    break;
+				                }
+				            }
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 					}
-
-
 				}
 			});
 		}
