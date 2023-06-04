@@ -155,7 +155,7 @@ public class HostPage{
 					            	 Alert alert = new Alert(Alert.AlertType.INFORMATION);
 								     alert.setTitle("Lobby");
 								     alert.setHeaderText(null);
-								     alert.setContentText("No player in the lobby yet ...");
+								     alert.setContentText("No players in the lobby yet ...");
 								     alert.showAndWait();
 					                 break;
 					             }

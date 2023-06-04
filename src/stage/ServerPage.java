@@ -8,7 +8,7 @@ import java.util.*;
 public class ServerPage {
 	private String memberPlayers="";
 	private int numOfPlayer = 0;
-	private int minPlayer = 3;
+	private int minPlayer = 4;
     ArrayList<PrintWriter> clientOutputStreams;
     ArrayList<ObjectOutputStream> gameCharacters;
     ArrayList<String> usernames = new ArrayList<>();

@@ -68,6 +68,7 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 
 	private ArrayList<RoadLines> lines;
 	private ArrayList<RoadLines> initLines;
+	private int gameOverCtr;
 
 	// CONSTRUCTOR
 	public GameTimer(GraphicsContext gc, GraphicsContext gc1, Canvas canvas1, Scene theScene, GameStage stage, Ship myShip){
@@ -99,6 +100,7 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 
 		this.lines= new ArrayList<RoadLines>();
 		this.initLines= new ArrayList<RoadLines>();
+		this.gameOverCtr=1;
 	}
 
 	// HANDLE METHOD
@@ -430,7 +432,11 @@ public class GameTimer extends AnimationTimer implements DataCallback{
 	        }
 			this.setUpGameOver(key);
 		} else if (this.myShip.getHealth() <= 0) {
-			stage.setWriter("gameOver= "+this.myShip.getName());
+			if(this.gameOverCtr==1){
+				System.out.println("set gameover --");
+				stage.setWriter("gameOver= "+this.myShip.getName());
+				this.gameOverCtr--;
+			}
 			this.setUpGameOver(null);
 		}
 	}
