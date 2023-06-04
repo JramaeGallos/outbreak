@@ -34,7 +34,6 @@ public class StartPage {
 	public final static int START_BUTTONS_START_X = 200;
 	public final static int START_BUTTONS_START_Y = 350;
 	private ArrayList<GameButton> startButtons;
-
 	private TextField userNameField;
 
 
@@ -133,9 +132,6 @@ public class StartPage {
 			button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent e) {
-
-
-
 					if (userNameField.getText().isEmpty()) {
 						// send an alert
 						Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -150,20 +146,20 @@ public class StartPage {
 				        alert.setContentText("User name must be less than 10 characters!");
 				        alert.showAndWait();
 					} else {
-						// valid username
-						// Check if username is unique
+						// Check if user name is unique
 						try {
 							 sock = new Socket("127.0.0.1", 5000); // connect to server
 							 BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 							 PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
 					         String serverMessage;
-					         // send the username to the server for checking
+					         // send the user name to the server for checking
 					         out.println("username=" + userNameField.getText());
 
 				            while ((serverMessage = in.readLine()) != null) {
 				            	if (serverMessage.equals("ACCEPTED")){
 				            		GameMenu menu = new GameMenu();
 									menu.setUserName(userNameField.getText());
+									menu.setSocket(sock);
 									menu.setStage(startStage);
 									break;
 				            	} else if (serverMessage.equals("DENIED")) {

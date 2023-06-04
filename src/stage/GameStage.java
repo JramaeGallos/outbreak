@@ -150,7 +150,6 @@ public class GameStage {
 
 	public void startClient() {
         try {
-            sock = new Socket("127.0.0.1", 5000); // connect to server
             reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             writer = new PrintWriter(sock.getOutputStream(), true);
 

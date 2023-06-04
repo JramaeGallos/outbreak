@@ -3,6 +3,7 @@ package stage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import javafx.application.Platform;
@@ -40,10 +41,10 @@ public class GameMenu {
 
 	private GameMenuSubScene helpSubScene;
 	private GameMenuSubScene aboutSubScene;
-	private GameMenuSubScene shownSubScene;  // to help with opening subscenes one at a time
+	private GameMenuSubScene shownSubScene;  // to help with opening sub scenes one at a time
 
 	private String userName;
-	private int numOfPlayers;
+	private Socket sock;
 
 	// CONSTRUCTOR
 	public GameMenu() {
@@ -81,11 +82,11 @@ public class GameMenu {
 		this.userName = user;
 	}
 
-	void setNumOfPlayers(int val){
-		this.numOfPlayers = val;
+	void setSocket(Socket sock){
+		this.sock = sock;
 	}
 
-	// create the subscene and its content
+	// create the sub scene and its content
 	private void createHelpSubScene() {
 		this.helpSubScene = new GameMenuSubScene();
 		PanelText text = new PanelText(
@@ -122,18 +123,18 @@ public class GameMenu {
 		this.aboutSubScene.getRootOfSubScene().getChildren().add(text);
 	}
 
-	// logic for the showing of subscenes (in menu)
+	// logic for the showing of sub scenes (in menu)
 	private void showSubScene(GameMenuSubScene subScene) {
-		// if there is a shown subscene and that subscene is different from our intended subscene
+		// if there is a shown sub scene and that sub scene is different from our intended sub scene
 		if (this.shownSubScene != null && this.shownSubScene != subScene) {
-			this.shownSubScene.movePanel(); //move that shown subscene
+			this.shownSubScene.movePanel(); //move that shown sub scene
 		}
 
-		// if the current shown subscene is clicked, hide that current subscene
+		// if the current shown sub scene is clicked, hide that current sub scene
 		if (subScene == this.shownSubScene) {
 			subScene.movePanel();
 			this.shownSubScene = null;
-		} else { // else, set the shown to be the current subscene
+		} else { // else, set the shown to be the current sub scene
 			subScene.movePanel();
 			this.shownSubScene = subScene;
 		}
@@ -197,7 +198,7 @@ public class GameMenu {
 
 	// methods for creating the menu buttons
 	private void createStartButton() {
-		GameButton button = new GameButton("PLAY");
+		GameButton button = new GameButton("START");
 		addMenuButton(button);
 
 		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -205,6 +206,7 @@ public class GameMenu {
 			public void handle(MouseEvent e) {
 				LoadingPage playGame = new LoadingPage();
 				playGame.setUserName(userName);
+				playGame.setSocket(sock);
 				playGame.setStage(menuStage);
 			}
 		});
