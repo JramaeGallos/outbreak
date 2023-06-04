@@ -6,8 +6,9 @@ import java.net.*;
 import java.util.*;
 
 public class ServerPage {
+	private String memberPlayers="";
 	private int numOfPlayer = 0;
-	private int minPlayer = 4;
+	private int minPlayer = 3;
     ArrayList<PrintWriter> clientOutputStreams;
     ArrayList<ObjectOutputStream> gameCharacters;
     ArrayList<String> usernames = new ArrayList<>();
@@ -56,9 +57,13 @@ public class ServerPage {
     public void broadcastReady(String name){
     	System.out.println("Number of players in the lobby: " + this.numOfPlayer);
     	if (this.numOfPlayer == 1){
+    		System.out.println("Player " + name + " is the host!");
     		for (PrintWriter writer : clientOutputStreams) {
                 writer.println("host=" + name);
             }
+    	}else{
+    		System.out.println("Player " + name + " joined the game!");
+    		this.memberPlayers= this.memberPlayers + name + "*";
     	}
     }
 
@@ -72,6 +77,19 @@ public class ServerPage {
                 writer.println("WAITING");
             }
     		System.out.println("Not all players are ready to start the game.");
+    	}
+    }
+
+    public void broadcastLobby(){
+    	System.out.println("show lobby ..." + this.memberPlayers);
+    	if(this.memberPlayers.length()==0){
+    		for (PrintWriter writer : clientOutputStreams) {
+    			writer.println("emptyLobby="+"--");
+            }
+    	}else{
+    		for (PrintWriter writer : clientOutputStreams) {
+    			writer.println("showLobby="+this.memberPlayers);
+            }
     	}
     }
 
@@ -134,7 +152,6 @@ public class ServerPage {
 				                    // Handle Event 4
 				                	numOfPlayer++;
 				                	broadcastReady(data);
-				                	System.out.println("Player " + data + " is ready!");
 				                } else if (event.equals("username")) {
 				                    // Handle Event 5
 				                	checkUsername(data);
@@ -143,7 +160,11 @@ public class ServerPage {
 				                	broadcastStart();
 				                } else if (event.equals("check")) {
 				                    // Handle Event 5
-				                	broadcastCheck();
+				                	if(data.equals("play")){
+				                		broadcastCheck();
+				                	}else if(data.equals("lobby")){
+				                		broadcastLobby();
+				                	}
 				                }
 						 }
 

@@ -31,6 +31,7 @@ public class HostPage{
 
 	public final static int START_BUTTONS_START_X = 320;
 	public final static int START_BUTTONS_START_Y = 320;
+	public final static int LOBBY_BUTTONS_START_Y = 380;
 	private String userName;
 
 	//Constructor
@@ -49,6 +50,7 @@ public class HostPage{
 			this.createBackground();
 			this.createGameTitle();
 			this.createPlayButton();
+			this.createLobbyButton();
 
 			this.startStage.setTitle("OUTBREAK!");
 			this.startStage.getIcons().add(GameMenu.icon);	//add icon to stage
@@ -80,16 +82,20 @@ public class HostPage{
 		}
 
 		// adding menu buttons to the root (in a vertical layout)
-		private void addStartButton(GameButton button) {
+		private void addStartButton(GameButton button, int type) {
 			// MARK: set button position
 			button.setLayoutX(START_BUTTONS_START_X);
-			button.setLayoutY(START_BUTTONS_START_Y);
+			if (type == 0){
+				button.setLayoutY(START_BUTTONS_START_Y);
+			}else{
+				button.setLayoutY(LOBBY_BUTTONS_START_Y);
+			}
 			this.startRoot.getChildren().add(button);
 		}
 
 		private void createPlayButton() {
 			GameButton button = new GameButton("PLAY");
-			addStartButton(button);
+			addStartButton(button,0);
 
 			button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
@@ -100,22 +106,75 @@ public class HostPage{
 			            String serverMessage;
 			            writer.println("check=play");
 
+
 			            while ((serverMessage = reader.readLine()) != null) {
-			            	if (serverMessage.equals("WAITING")) {
+			           	 if (serverMessage.equals("WAITING")) {
 			            		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 						        alert.setTitle("Waiting");
 						        alert.setHeaderText(null);
 						        alert.setContentText("Waiting for players...");
 						        alert.showAndWait();
 			                    break;
-			                }else if (serverMessage.equals("READY")) {
+			              }else if (serverMessage.equals("READY")) {
 			                	writer.println("status=play");
-			                }else if (serverMessage.equals("START")) {
+			              }else if (serverMessage.equals("START")) {
 			                	GameStage playGame = new GameStage(sock);
 		    					playGame.setUserName(userName);
 		    					playGame.setStage(startStage);
 			                    break;
-			                }
+				         }
+
+			            }
+			        } catch (IOException ex) {
+			            ex.printStackTrace();
+			        }
+				}
+			});
+	    }
+
+		private void createLobbyButton() {
+			GameButton button = new GameButton("Lobby");
+			addStartButton(button,1);
+
+			button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent e) {
+					try {
+			        	reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+			            writer = new PrintWriter(sock.getOutputStream(), true);
+			            String serverMessage;
+			            writer.println("check=lobby");
+
+
+			            while ((serverMessage = reader.readLine()) != null) {
+			            	 String[] parts = serverMessage.split("=");
+				             if(parts.length!=1){
+				            	 String event = parts[0];
+					             String data = parts[1];
+					             if(event.equals("emptyLobby")) {
+					            	 Alert alert = new Alert(Alert.AlertType.INFORMATION);
+								     alert.setTitle("Lobby");
+								     alert.setHeaderText(null);
+								     alert.setContentText("No player in the lobby yet ...");
+								     alert.showAndWait();
+					                 break;
+					             }
+					             else if(event.equals("showLobby")){
+					            	 Alert alert = new Alert(Alert.AlertType.INFORMATION);
+								     alert.setTitle("Lobby");
+								     alert.setHeaderText(null);
+								     String[] players= data.split("\\*");
+								     String content="";
+								     for(String player: players){
+								    	 content= content + "Player "+player+ " has joined the game. \n";
+								     }
+								     alert.setContentText(content);
+								     alert.showAndWait();
+					                 break;
+					             }
+				             }else{
+				            	 break;
+				             }
 			            }
 			        } catch (IOException ex) {
 			            ex.printStackTrace();
